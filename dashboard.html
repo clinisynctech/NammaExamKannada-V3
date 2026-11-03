@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My Study — Namma Exam</title>
+<meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d2b4e">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&family=Inter:wght@400;500;600;700&family=Noto+Serif+Kannada:wght@600;700&family=Noto+Sans+Kannada:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .greet{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px; }
+  .greet h1{ font-size:1.15rem; }
+
+  .ring-row{ display:flex; align-items:center; gap:14px; }
+  .ring-text .big{ font-family:var(--font-head); font-weight:700; color:var(--navy); font-size:1rem; }
+
+  .count-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+  .count-days{ font-family:var(--font-head); font-weight:700; color:var(--gold); font-size:1.05rem; }
+  .bar{ height:7px; background:var(--navy-soft); border-radius:999px; overflow:hidden; }
+  .bar span{ display:block; height:100%; background:var(--gold); border-radius:999px; }
+
+  .chips{ display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin:12px 0; }
+  .chip{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:11px 6px; text-align:center; }
+  .chip b{ display:block; font-family:var(--font-head); font-size:1.18rem; color:var(--navy); }
+  .chip span{ font-size:0.68rem; color:var(--ink-soft); }
+
+  .heat{ display:grid; grid-template-columns:repeat(14,1fr); gap:3px; }
+  .heat i{ display:block; aspect-ratio:1; border-radius:2px; background:#f1ece0; }
+
+  .task{ display:flex; align-items:center; gap:10px; padding:7px 0; }
+  .task button.tick{
+    width:22px; height:22px; flex:0 0 22px; border-radius:6px; cursor:pointer;
+    border:1.6px solid var(--line); background:#fff; padding:0;
+    display:flex; align-items:center; justify-content:center; color:#fff;
+  }
+  .task.done button.tick{ background:var(--green); border-color:var(--green); }
+  .task.done .task-text{ text-decoration:line-through; color:var(--ink-soft); }
+  .task-text{ flex:1; font-size:0.9rem; }
+  .task .del{ background:none; border:0; color:var(--ink-soft); cursor:pointer; font-size:1.1rem; padding:0 4px; }
+  .add-row{ display:flex; gap:8px; margin-top:8px; }
+  .add-row input{ flex:1; min-height:42px; padding:9px 12px; border:1.5px solid var(--line); border-radius:8px; }
+
+  .cal{ display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+  .cal .dow{ text-align:center; font-size:0.66rem; color:var(--ink-soft); padding-bottom:4px; }
+  .cal button{
+    aspect-ratio:1; border:1px solid var(--line); background:#fff; border-radius:7px;
+    font-size:0.8rem; cursor:pointer; position:relative; color:var(--ink);
+  }
+  .cal button.off{ visibility:hidden; }
+  .cal button.today{ border-color:var(--navy); font-weight:700; }
+  .cal button.has::after{
+    content:''; position:absolute; bottom:5px; left:50%; transform:translateX(-50%);
+    width:5px; height:5px; border-radius:50%; background:var(--gold);
+  }
+
+  .cat{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); margin-bottom:9px; overflow:hidden; }
+  .cat-head{ display:flex; align-items:center; gap:10px; padding:13px 14px; cursor:pointer; }
+  .cat-name{ font-family:var(--font-head); font-weight:700; color:var(--navy); font-size:0.94rem; }
+  .cat-chev{ margin-left:auto; color:var(--ink-soft); transition:transform .2s; }
+  .cat.open .cat-chev{ transform:rotate(180deg); }
+  .cat-body{ display:none; border-top:1px solid var(--line); padding:4px 14px 14px; }
+  .cat.open .cat-body{ display:block; }
+  .post{ padding-top:13px; }
+  .post + .post{ border-top:1px dashed var(--line); }
+  .post-name{ font-weight:700; font-size:0.88rem; }
+  .papers{ display:grid; grid-template-columns:repeat(auto-fill,minmax(126px,1fr)); gap:8px; margin-top:9px; }
+  .paper{ border:1px solid var(--line); border-radius:9px; padding:10px; text-align:center; background:var(--paper); }
+  .paper-year{ font-family:var(--font-head); font-weight:700; color:var(--navy); }
+  .paper-att{ font-size:0.66rem; color:var(--ink-soft); margin:2px 0 7px; }
+  .paper .btn{ width:100%; }
+
+  .sub-banner{
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    background:var(--navy); color:#fff; border-radius:var(--radius);
+    padding:14px 16px; margin-bottom:14px;
+  }
+  .sub-banner p{ flex:1; min-width:180px; font-size:0.86rem; color:rgba(255,255,255,.85); }
+</style>
+</head>
+<body>
+
+<header id="app-header"></header>
+
+<main class="wrap" style="padding-top:16px; padding-bottom:24px;">
+
+  <div id="loading"></div>
+  <div class="msg" id="err"></div>
+
+  <div id="content" class="hidden">
+
+    <div class="greet">
+      <h1 id="greet-name"></h1>
+      <span class="badge" id="sub-badge"></span>
+    </div>
+
+    <div class="sub-banner hidden" id="sub-banner">
+      <p data-en="Unlock every paper in every department for one year."
+         data-kn="ಒಂದು ವರ್ಷಕ್ಕೆ ಎಲ್ಲಾ ಪತ್ರಿಕೆಗಳನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಿ.">Unlock every paper in every department for one year.</p>
+      <a class="btn btn-primary btn-sm" href="subscribe.html">₹49</a>
+    </div>
+
+    <!-- readiness -->
+    <div class="card">
+      <div class="ring-row">
+        <svg width="78" height="78" viewBox="0 0 78 78" aria-hidden="true">
+          <circle cx="39" cy="39" r="32" fill="none" stroke="#eaf0f6" stroke-width="8"/>
+          <circle id="ring" cx="39" cy="39" r="32" fill="none" stroke="#1f7a4d" stroke-width="8"
+                  stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="201"
+                  transform="rotate(-90 39 39)" style="transition:stroke-dashoffset .6s ease"/>
+          <text id="ring-pct" x="39" y="44" text-anchor="middle" font-size="17"
+                font-weight="700" fill="#0d2b4e">0%</text>
+        </svg>
+        <div class="ring-text">
+          <div class="big" id="ring-label" data-en="Readiness" data-kn="ಸಿದ್ಧತೆ">Readiness</div>
+          <div class="muted" id="ring-hint"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- goal / countdown -->
+    <div class="card" style="margin-top:10px">
+      <div id="goal-set" class="hidden">
+        <div class="count-row">
+          <span class="card-title" id="goal-post"></span>
+          <span class="count-days" id="goal-days"></span>
+        </div>
+        <div class="muted" id="goal-score" style="margin-bottom:5px"></div>
+        <div class="bar"><span id="goal-bar" style="width:0"></span></div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:11px" onclick="openGoal()"
+                data-en="Edit target" data-kn="ಗುರಿ ಬದಲಿಸಿ">Edit target</button>
+      </div>
+      <div id="goal-none">
+        <div class="card-title" data-en="Set your target" data-kn="ನಿಮ್ಮ ಗುರಿ ಹೊಂದಿಸಿ">Set your target</div>
+        <p class="muted" style="margin:5px 0 11px"
+           data-en="Pick the exam you are preparing for and see a countdown."
+           data-kn="ನೀವು ತಯಾರಾಗುತ್ತಿರುವ ಪರೀಕ್ಷೆ ಆಯ್ಕೆಮಾಡಿ.">Pick the exam you are preparing for and see a countdown.</p>
+        <button class="btn btn-navy btn-sm" onclick="openGoal()"
+                data-en="Set target" data-kn="ಗುರಿ ಹೊಂದಿಸಿ">Set target</button>
+      </div>
+    </div>
+
+    <!-- streak chips -->
+    <div class="chips">
+      <div class="chip"><b id="c-streak">0</b><span data-en="day streak" data-kn="ದಿನ ಸರಣಿ">day streak</span></div>
+      <div class="chip"><b id="c-days">0</b><span data-en="active days" data-kn="ಸಕ್ರಿಯ ದಿನ">active days</span></div>
+      <div class="chip"><b id="c-exams">0</b><span data-en="exams" data-kn="ಪರೀಕ್ಷೆಗಳು">exams</span></div>
+    </div>
+
+    <!-- attendance -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title" data-en="Attendance" data-kn="ಹಾಜರಾತಿ">Attendance</span>
+        <span class="muted" id="heat-note"></span>
+      </div>
+      <div class="heat" id="heat"></div>
+    </div>
+
+    <!-- today's plan -->
+    <div class="card" style="margin-top:10px">
+      <div class="card-head">
+        <span class="card-title" data-en="Today's plan" data-kn="ಇಂದಿನ ಯೋಜನೆ">Today's plan</span>
+        <button class="btn btn-ghost btn-sm" onclick="openMonth()"
+                data-en="Month" data-kn="ತಿಂಗಳು">Month</button>
+      </div>
+      <div id="tasks"></div>
+      <div class="add-row">
+        <input id="task-new" data-ph data-en="Add a task for today" data-kn="ಇಂದಿನ ಕೆಲಸ ಸೇರಿಸಿ">
+        <button class="btn btn-navy btn-sm" onclick="addTask()" data-en="Add" data-kn="ಸೇರಿಸಿ">Add</button>
+      </div>
+    </div>
+
+    <!-- papers -->
+    <h2 style="margin:20px 0 10px" data-en="Your papers" data-kn="ನಿಮ್ಮ ಪತ್ರಿಕೆಗಳು">Your papers</h2>
+    <div id="cats"></div>
+
+    <div class="center" style="margin-top:20px">
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()"
+              data-en="Log out" data-kn="ಲಾಗ್ ಔಟ್">Log out</button>
+    </div>
+  </div>
+</main>
+
+<!-- ===== goal sheet ===== -->
+<div class="overlay" id="goal-sheet">
+  <div class="sheet">
+    <h2 data-en="Your target" data-kn="ನಿಮ್ಮ ಗುರಿ">Your target</h2>
+    <div class="field" style="margin-top:12px">
+      <label data-en="Preparing for" data-kn="ಯಾವ ಹುದ್ದೆಗೆ">Preparing for</label>
+      <select id="g-post"></select>
+    </div>
+    <div class="field">
+      <label data-en="Exam date" data-kn="ಪರೀಕ್ಷೆ ದಿನಾಂಕ">Exam date</label>
+      <input type="date" id="g-date">
+    </div>
+    <div class="field">
+      <label data-en="I want to become" data-kn="ನಾನು ಆಗಬೇಕು">I want to become</label>
+      <input type="text" id="g-asp" data-ph data-en="Village Accountant" data-kn="ಗ್ರಾಮ ಲೆಕ್ಕಿಗ">
+    </div>
+    <div class="field">
+      <label data-en="Target score" data-kn="ಗುರಿ ಅಂಕ">Target score</label>
+      <input type="number" id="g-score" inputmode="numeric">
+    </div>
+    <button class="btn btn-primary btn-block" onclick="saveGoal()" data-en="Save" data-kn="ಉಳಿಸಿ">Save</button>
+    <button class="btn btn-ghost btn-block" style="margin-top:8px" onclick="closeSheet('goal-sheet')"
+            data-en="Cancel" data-kn="ರದ್ದು">Cancel</button>
+  </div>
+</div>
+
+<!-- ===== month planner ===== -->
+<div class="overlay" id="month-sheet">
+  <div class="sheet">
+    <div class="card-head">
+      <button class="btn btn-ghost btn-sm" onclick="shiftMonth(-1)">&lsaquo;</button>
+      <span class="card-title" id="m-label"></span>
+      <button class="btn btn-ghost btn-sm" onclick="shiftMonth(1)">&rsaquo;</button>
+    </div>
+    <div class="cal" id="m-grid"></div>
+    <div style="margin-top:14px">
+      <div class="card-title" id="m-day-label"></div>
+      <div id="m-tasks"></div>
+      <div class="add-row">
+        <input id="m-new" data-ph data-en="Add a task" data-kn="ಕೆಲಸ ಸೇರಿಸಿ">
+        <button class="btn btn-navy btn-sm" onclick="addTask(selectedDate)" data-en="Add" data-kn="ಸೇರಿಸಿ">Add</button>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-block" style="margin-top:12px" onclick="closeSheet('month-sheet')"
+            data-en="Close" data-kn="ಮುಚ್ಚಿ">Close</button>
+  </div>
+</div>
+
+<footer id="app-footer"></footer>
+<nav id="app-tabbar"></nav>
+
+<script src="assets/app.js"></script>
+<script>
+  renderChrome('dash');
+
+  const session = Session.require();
+  let data = null, cal = null, notes = [], selectedDate = iso(new Date());
+  let monthCursor = new Date();
+
+  function iso(d){ return d.toISOString().slice(0,10); }
+  function fmtDay(s){
+    const d = new Date(s + 'T00:00:00');
+    return d.toLocaleDateString(undefined, { weekday:'short', day:'numeric', month:'short' });
+  }
+
+  /* ================= load ================= */
+  async function load() {
+    if (!session) return;
+    showLoader('loading', 'Loading your study...');
+    try {
+      const [d, c] = await Promise.all([
+        api('get_dashboard', { p_mobile: session.mobile }),
+        api('get_study_calendar', { p_mobile: session.mobile, p_days: 98 }),
+      ]);
+      if (!d || d.success !== true) throw new Error(d && d.error);
+      data = d; cal = c;
+      document.getElementById('loading').innerHTML = '';
+      document.getElementById('content').classList.remove('hidden');
+      render();
+    } catch (e) {
+      document.getElementById('loading').innerHTML = '';
+      showMsg('err', errorText(e.message));
+    }
+  }
+
+  /* ================= render ================= */
+  function render() {
+    const s = data.student;
+
+    document.getElementById('greet-name').textContent =
+      (lang() === 'kn' ? 'ನಮಸ್ಕಾರ, ' : 'Namaskara, ') + s.name;
+
+    const badge = document.getElementById('sub-badge');
+    if (s.subscribed) {
+      badge.className = 'badge badge-active';
+      badge.textContent = (lang() === 'kn' ? 'ಸಕ್ರಿಯ' : 'Active') + ' · ' + (s.subscriptionExpiry || '');
+      document.getElementById('sub-banner').classList.add('hidden');
+    } else {
+      badge.className = 'badge badge-inactive';
+      badge.textContent = lang() === 'kn' ? 'ಉಚಿತ ಯೋಜನೆ' : 'Free plan';
+      document.getElementById('sub-banner').classList.remove('hidden');
+    }
+
+    // readiness ring — 201 is the circumference of r=32
+    const pct = Number(data.readiness) || 0;
+    document.getElementById('ring').setAttribute('stroke-dashoffset', String(201 - 201 * pct / 100));
+    document.getElementById('ring-pct').textContent = pct + '%';
+    document.getElementById('ring-hint').textContent =
+      data.totalExams === 0 ? 'Take a paper to start' :
+      pct >= 70 ? 'Strong — keep the streak' :
+      pct >= 40 ? 'On track — keep practising' : 'Early days — practise regularly';
+
+    // chips
+    const st = data.streak || {};
+    document.getElementById('c-streak').textContent = st.currentStreak || 0;
+    document.getElementById('c-days').textContent   = st.activeDays || 0;
+    document.getElementById('c-exams').textContent  = data.totalExams || 0;
+
+    renderGoal();
+    renderHeat();
+    renderTasks(data.todayTasks || [], 'tasks', null);
+    renderCats();
+    applyLang();
+  }
+
+  function renderGoal() {
+    const g = data.goal;
+    const has = g && (g.targetExamDate || g.targetPostId || g.targetScore);
+    document.getElementById('goal-set').classList.toggle('hidden', !has);
+    document.getElementById('goal-none').classList.toggle('hidden', !!has);
+    if (!has) return;
+
+    document.getElementById('goal-post').textContent = postName(g.targetPostId) || (g.aspiration || 'My target');
+    const days = g.daysLeft;
+    document.getElementById('goal-days').textContent =
+      days === null || days === undefined ? '' :
+      days < 0 ? 'Exam passed' : days + (lang() === 'kn' ? ' ದಿನ ಬಾಕಿ' : ' days left');
+
+    const best = Number(g.bestScore || 0), target = Number(g.targetScore || 0);
+    document.getElementById('goal-score').textContent =
+      target ? 'Best ' + best + ' / Target ' + target : 'Best ' + best;
+    document.getElementById('goal-bar').style.width =
+      target ? Math.min(100, Math.round(best / target * 100)) + '%' : '0';
+  }
+
+  function postName(postId) {
+    let out = null;
+    (data.categories || []).forEach(function (c) {
+      (c.posts || []).forEach(function (p) { if (p.postId === postId) out = pick(p.nameEn, p.nameKn); });
+    });
+    return out;
+  }
+
+  /* 14 columns x 7 rows of days, most recent last */
+  function renderHeat() {
+    const counts = {};
+    ((cal && cal.days) || []).forEach(function (d) { counts[d.date] = d.exams; });
+
+    const cells = [];
+    const today = new Date();
+    for (let i = 97; i >= 0; i--) {
+      const d = new Date(today); d.setDate(d.getDate() - i);
+      const key = iso(d); const n = counts[key] || 0;
+      const bg = n === 0 ? '#f1ece0' : n === 1 ? '#e9cf94' : n === 2 ? '#d8a648' : '#1f7a4d';
+      cells.push('<i title="' + key + ' · ' + n + '" style="background:' + bg + '"></i>');
+    }
+    document.getElementById('heat').innerHTML = cells.join('');
+    document.getElementById('heat-note').textContent = (cal && cal.days ? cal.days.length : 0) + ' active days';
+  }
+
+  function renderTasks(list, intoId, dateForEmpty) {
+    const box = document.getElementById(intoId);
+    if (!list.length) {
+      box.innerHTML = '<p class="muted" style="padding:6px 0">' +
+        (dateForEmpty ? 'Nothing planned.' : 'Nothing planned for today.') + '</p>';
+      return;
+    }
+    box.innerHTML = list.map(function (t) {
+      return '<div class="task' + (t.isDone ? ' done' : '') + '">' +
+        '<button class="tick" onclick="tick(' + t.id + ',' + (!t.isDone) + ')" aria-label="Done">' +
+          (t.isDone ? '<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" ' +
+                      'stroke-width="2.4" stroke-linecap="round"><path d="M2 8l4 4 8-8"/></svg>' : '') +
+        '</button>' +
+        '<span class="task-text">' + esc(t.body) + '</span>' +
+        '<button class="del" onclick="delTask(' + t.id + ')" aria-label="Delete">&times;</button>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderCats() {
+    const box = document.getElementById('cats');
+    box.innerHTML = (data.categories || []).map(function (cat, idx) {
+      const posts = (cat.posts || []);
+      return '<div class="cat" id="dcat-' + idx + '">' +
+        '<div class="cat-head" onclick="toggleCat(' + idx + ')">' +
+          '<span class="cat-name">' + esc(pick(cat.nameEn, cat.nameKn)) + '</span>' +
+          '<span class="cat-chev"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" ' +
+            'stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></span>' +
+        '</div>' +
+        '<div class="cat-body">' + posts.map(function (p) {
+          return '<div class="post">' +
+            '<div class="post-name">' + esc(pick(p.nameEn, p.nameKn)) + '</div>' +
+            '<div class="papers">' + (p.papers || []).map(paperCard).join('') + '</div>' +
+          '</div>';
+        }).join('') + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function paperCard(p) {
+    const id = esc(p.paperId);
+    const limit = Number(p.attemptLimit);
+    const attempts = limit >= 900
+      ? (lang() === 'kn' ? 'ಅಪರಿಮಿತ' : 'Unlimited')
+      : p.attemptsUsed + '/' + limit + (lang() === 'kn' ? ' ಬಾರಿ' : ' used');
+
+    let cls = 'badge-locked', label = 'LOCKED', btn = null;
+    if (p.status === 'continue')      { cls = 'badge-warn';   label = 'RESUME';   btn = ['btn-primary', 'Resume', 'ಮುಂದುವರಿಸಿ']; }
+    else if (p.status === 'free')     { cls = 'badge-free';   label = 'FREE';     btn = ['btn-primary', 'Start', 'ಪ್ರಾರಂಭಿಸಿ']; }
+    else if (p.status === 'unlocked') { cls = 'badge-active'; label = 'UNLOCKED'; btn = ['btn-navy', 'Start', 'ಪ್ರಾರಂಭಿಸಿ']; }
+
+    const out = Number(p.attemptsUsed) >= limit && limit < 900;
+
+    return '<div class="paper">' +
+      '<div class="paper-year">' + esc(p.year || '—') + '</div>' +
+      '<div class="paper-att">' + attempts + '</div>' +
+      '<span class="badge ' + cls + '" style="display:block;margin-bottom:7px">' + label + '</span>' +
+      (btn && !out
+        ? '<button class="btn ' + btn[0] + ' btn-sm" onclick="goExam(\'' + id + '\')">' + btn[1] + '</button>'
+        : out
+          ? '<button class="btn btn-ghost btn-sm" disabled>No attempts left</button>'
+          : '<button class="btn btn-ghost btn-sm" onclick="location.href=\'subscribe.html\'">Unlock</button>') +
+    '</div>';
+  }
+
+  /* ================= actions ================= */
+  function toggleCat(i){ document.getElementById('dcat-' + i).classList.toggle('open'); }
+  function goExam(id){ location.href = 'exam.html?paper=' + encodeURIComponent(id); }
+  function doLogout(){ Session.clear(); location.href = 'index.html'; }
+  function closeSheet(id){ document.getElementById(id).classList.remove('show'); }
+
+  /* ---- goal ---- */
+  function openGoal() {
+    const sel = document.getElementById('g-post');
+    sel.innerHTML = '<option value="">—</option>' + (data.categories || []).map(function (c) {
+      return (c.posts || []).map(function (p) {
+        return '<option value="' + esc(p.postId) + '">' + esc(pick(p.nameEn, p.nameKn)) + '</option>';
+      }).join('');
+    }).join('');
+    const g = data.goal || {};
+    sel.value = g.targetPostId || '';
+    document.getElementById('g-date').value  = g.targetExamDate || '';
+    document.getElementById('g-asp').value   = g.aspiration || '';
+    document.getElementById('g-score').value = g.targetScore || '';
+    document.getElementById('goal-sheet').classList.add('show');
+  }
+
+  async function saveGoal() {
+    try {
+      const r = await api('save_goal', {
+        p_mobile: session.mobile,
+        p_target_post_id: document.getElementById('g-post').value || null,
+        p_target_exam_date: document.getElementById('g-date').value || null,
+        p_aspiration: document.getElementById('g-asp').value || null,
+        p_target_score: parseInt(document.getElementById('g-score').value, 10) || null,
+      });
+      if (!r || r.success !== true) return toast(errorText(r && r.error));
+      closeSheet('goal-sheet');
+      toast('Target saved');
+      await load();
+    } catch (e) { toast(errorText(e.message)); }
+  }
+
+  /* ---- tasks ---- */
+  async function addTask(forDate) {
+    const inputId = forDate ? 'm-new' : 'task-new';
+    const box = document.getElementById(inputId);
+    const body = box.value.trim();
+    if (!body) return;
+    try {
+      const r = await api('save_note', {
+        p_mobile: session.mobile, p_note_date: forDate || iso(new Date()), p_body: body,
+      });
+      if (!r || r.success !== true) return toast(errorText(r && r.error));
+      box.value = '';
+      forDate ? await loadMonth() : await load();
+    } catch (e) { toast(errorText(e.message)); }
+  }
+
+  async function tick(id, done) {
+    try {
+      await api('toggle_note', { p_mobile: session.mobile, p_id: id, p_is_done: done });
+      document.getElementById('month-sheet').classList.contains('show') ? await loadMonth() : await load();
+    } catch (e) { toast(errorText(e.message)); }
+  }
+
+  async function delTask(id) {
+    try {
+      await api('delete_note', { p_mobile: session.mobile, p_id: id });
+      document.getElementById('month-sheet').classList.contains('show') ? await loadMonth() : await load();
+    } catch (e) { toast(errorText(e.message)); }
+  }
+
+  /* ---- month planner ---- */
+  function openMonth() { monthCursor = new Date(); selectedDate = iso(new Date()); loadMonth();
+                         document.getElementById('month-sheet').classList.add('show'); }
+  function shiftMonth(n) { monthCursor.setMonth(monthCursor.getMonth() + n); loadMonth(); }
+
+  async function loadMonth() {
+    const y = monthCursor.getFullYear(), m = monthCursor.getMonth();
+    const first = new Date(y, m, 1), last = new Date(y, m + 1, 0);
+    document.getElementById('m-label').textContent =
+      first.toLocaleDateString(undefined, { month:'long', year:'numeric' });
+
+    try {
+      const r = await api('get_notes', {
+        p_mobile: session.mobile, p_from: iso(first), p_to: iso(last),
+      });
+      notes = (r && r.notes) || [];
+    } catch (e) { notes = []; }
+
+    const byDate = {};
+    notes.forEach(function (n) { (byDate[n.date] = byDate[n.date] || []).push(n); });
+
+    let html = ['S','M','T','W','T','F','S'].map(function (d) { return '<span class="dow">' + d + '</span>'; }).join('');
+    for (let i = 0; i < first.getDay(); i++) html += '<button class="off"></button>';
+    for (let d = 1; d <= last.getDate(); d++) {
+      const key = iso(new Date(y, m, d));
+      html += '<button class="' + (byDate[key] ? 'has ' : '') + (key === iso(new Date()) ? 'today' : '') + '" ' +
+              'onclick="pickDay(\'' + key + '\')">' + d + '</button>';
+    }
+    document.getElementById('m-grid').innerHTML = html;
+    pickDay(selectedDate, byDate);
+  }
+
+  function pickDay(key, byDate) {
+    selectedDate = key;
+    if (!byDate) { byDate = {}; notes.forEach(function (n) { (byDate[n.date] = byDate[n.date] || []).push(n); }); }
+    document.getElementById('m-day-label').textContent = fmtDay(key);
+    renderTasks(byDate[key] || [], 'm-tasks', key);
+  }
+
+  document.addEventListener('ne:lang', function () { if (data) render(); });
+  load();
+</script>
+
+</body>
+</html>

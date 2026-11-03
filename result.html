@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your Result — Namma Exam</title>
+<meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d2b4e">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&family=Inter:wght@400;500;600;700&family=Noto+Serif+Kannada:wght@600;700&family=Noto+Sans+Kannada:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .hero{ background:var(--navy); color:#fff; border-radius:var(--radius); padding:22px 18px; text-align:center; }
+  .hero .label{ font-size:0.78rem; color:rgba(255,255,255,.7); }
+  .hero .score{ font-family:var(--font-head); font-size:3rem; font-weight:700; line-height:1.1; }
+  .hero .outof{ font-size:0.86rem; color:rgba(255,255,255,.75); }
+  .hero .pct{ display:inline-block; margin-top:8px; background:var(--gold); color:var(--navy);
+              font-weight:700; padding:3px 13px; border-radius:999px; font-size:0.84rem; }
+
+  .stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:12px 0; }
+  .stat{ background:#fff; border:1px solid var(--line); border-radius:9px; padding:11px 4px; text-align:center; }
+  .stat b{ display:block; font-family:var(--font-head); font-size:1.1rem; color:var(--navy); }
+  .stat span{ font-size:0.64rem; color:var(--ink-soft); }
+
+  .actions{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:16px; }
+
+  .diff-row{ display:flex; align-items:center; gap:9px; margin-bottom:7px; font-size:0.82rem; }
+  .diff-row .k{ width:66px; flex:0 0 66px; color:var(--ink-soft); }
+  .diff-row .v{ width:52px; text-align:right; font-size:0.76rem; color:var(--ink-soft); }
+  .bar{ flex:1; height:7px; background:var(--navy-soft); border-radius:999px; overflow:hidden; }
+  .bar span{ display:block; height:100%; border-radius:999px; }
+
+  .rfilters{ display:flex; gap:6px; margin:16px 0 10px; flex-wrap:wrap; }
+  .rf{ border:1.4px solid var(--line); background:#fff; border-radius:999px;
+       padding:6px 12px; font-size:0.76rem; cursor:pointer; }
+  .rf.active{ background:var(--navy); color:#fff; border-color:var(--navy); }
+
+  .ritem{ background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+          padding:14px; margin-bottom:9px; }
+  .rq{ font-size:0.94rem; line-height:1.55; margin-bottom:10px; }
+  .rq b{ color:var(--navy); }
+  .rimg{ max-width:100%; border:1px solid var(--line); border-radius:8px; margin-bottom:10px; }
+  .ropt{ display:flex; gap:8px; align-items:flex-start; font-size:0.86rem;
+         padding:8px 10px; border-radius:8px; margin-bottom:5px; }
+  .ropt.ok{ background:var(--green-soft); color:var(--green); }
+  .ropt.bad{ background:var(--red-soft); color:var(--red); }
+  .ropt.skip{ background:#f3f1ea; color:var(--ink-soft); }
+  .rexp{ background:var(--navy-soft); color:var(--navy); border-radius:8px;
+         padding:10px; font-size:0.84rem; margin-top:7px; line-height:1.5; }
+  .rtag{ display:inline-block; font-size:0.66rem; background:#f3f1ea; color:var(--ink-soft);
+         padding:2px 8px; border-radius:999px; margin-right:5px; }
+
+  .pitch{ background:var(--gold); color:var(--navy); border-radius:var(--radius);
+          padding:16px; text-align:center; margin:16px 0; }
+</style>
+</head>
+<body>
+
+<header id="app-header"></header>
+
+<main class="wrap" style="padding-top:16px; padding-bottom:24px;">
+  <div id="loading"></div>
+  <div class="msg" id="err"></div>
+
+  <div id="content" class="hidden">
+    <div class="hero">
+      <div class="label" data-en="Your score" data-kn="ನಿಮ್ಮ ಅಂಕ">Your score</div>
+      <div class="score" id="h-score">0</div>
+      <div class="outof" id="h-max"></div>
+      <div class="pct" id="h-pct"></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b id="s-correct">0</b><span data-en="Correct" data-kn="ಸರಿ">Correct</span></div>
+      <div class="stat"><b id="s-wrong">0</b><span data-en="Wrong" data-kn="ತಪ್ಪು">Wrong</span></div>
+      <div class="stat"><b id="s-skip">0</b><span data-en="Skipped" data-kn="ಬಿಟ್ಟದ್ದು">Skipped</span></div>
+      <div class="stat"><b id="s-acc">0%</b><span data-en="Accuracy" data-kn="ನಿಖರತೆ">Accuracy</span></div>
+    </div>
+
+    <div class="actions no-print">
+      <a class="btn btn-navy btn-sm" id="a-cert" href="#" data-en="Certificate" data-kn="ಪ್ರಮಾಣಪತ್ರ">Certificate</a>
+      <a class="btn btn-ghost btn-sm" id="a-share" href="#" target="_blank" rel="noopener"
+         data-en="Share" data-kn="ಹಂಚಿಕೊಳ್ಳಿ">Share</a>
+      <button class="btn btn-ghost btn-sm" onclick="window.print()" data-en="Save as PDF" data-kn="PDF">Save as PDF</button>
+      <a class="btn btn-ghost btn-sm" href="dashboard.html" data-en="Dashboard" data-kn="ಡ್ಯಾಶ್‌ಬೋರ್ಡ್">Dashboard</a>
+    </div>
+
+    <!-- difficulty, only when the paper is actually tagged -->
+    <div class="card hidden" id="diff-card">
+      <div class="card-title" style="margin-bottom:10px"
+           data-en="By difficulty" data-kn="ಕಷ್ಟದ ಪ್ರಕಾರ">By difficulty</div>
+      <div id="diff-rows"></div>
+    </div>
+
+    <div class="pitch no-print hidden" id="pitch">
+      <h3 style="color:var(--navy)" data-en="Liked this?" data-kn="ಇಷ್ಟವಾಯಿತೆ?">Liked this?</h3>
+      <p style="font-size:0.86rem; margin:6px 0 11px"
+         data-en="Unlock every paper in every department for one year."
+         data-kn="ಒಂದು ವರ್ಷಕ್ಕೆ ಎಲ್ಲಾ ಪತ್ರಿಕೆಗಳನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಿ.">Unlock every paper in every department for one year.</p>
+      <a class="btn btn-navy btn-sm" href="subscribe.html">₹49</a>
+    </div>
+
+    <!-- Also offered here, where there is no exam to interrupt and the
+         student has just seen every question in the paper. -->
+    <div class="msg msg-info show no-print" style="margin-top:16px; font-size:0.82rem">
+      <span data-en="Found a question with no text, a missing image, or blank options?"
+            data-kn="ಪಠ್ಯವಿಲ್ಲದ ಪ್ರಶ್ನೆ, ಕಾಣೆಯಾದ ಚಿತ್ರ ಅಥವಾ ಖಾಲಿ ಆಯ್ಕೆಗಳು ಸಿಕ್ಕಿವೆಯೇ?">Found a question with no text, a missing image, or blank options?</span>
+      <a id="report-link" target="_blank" rel="noopener"
+         style="text-decoration:underline; font-weight:700; margin-left:4px"
+         data-en="Report it with a screenshot" data-kn="ಸ್ಕ್ರೀನ್‌ಶಾಟ್‌ನೊಂದಿಗೆ ವರದಿ ಮಾಡಿ">Report it with a screenshot</a>
+    </div>
+
+    <h2 style="margin-top:18px" data-en="Answer review" data-kn="ಉತ್ತರ ಪರಿಶೀಲನೆ">Answer review</h2>
+    <div class="rfilters no-print">
+      <button class="rf active" onclick="setRF('all',this)"     data-en="All" data-kn="ಎಲ್ಲಾ">All</button>
+      <button class="rf"        onclick="setRF('wrong',this)"   data-en="Wrong only" data-kn="ತಪ್ಪು">Wrong only</button>
+      <button class="rf"        onclick="setRF('skipped',this)" data-en="Skipped" data-kn="ಬಿಟ್ಟದ್ದು">Skipped</button>
+    </div>
+    <div id="review"></div>
+  </div>
+</main>
+
+<footer id="app-footer"></footer>
+<nav id="app-tabbar"></nav>
+
+<script src="assets/app.js"></script>
+<script>
+  renderChrome('dash', 'result');
+  document.getElementById('report-link').href = SITE.reportForm;
+
+  const paperId = new URLSearchParams(location.search).get('paper');
+  const session = Session.get();
+  let R = null, rf = 'all';
+
+  async function load() {
+    showLoader('loading', 'Loading your result...');
+
+    // The exam page stashes the submit response, so the result shows with no
+    // round trip at all. Anything older is fetched — which v2 could not do:
+    // its review lived only in localStorage and was gone once the tab closed.
+    let stashed = null;
+    try {
+      const raw = localStorage.getItem('nec_last_result');
+      if (raw) {
+        const s = JSON.parse(raw);
+        if (!paperId || s.paperId === paperId) stashed = s;
+      }
+    } catch (e) {}
+
+    if (stashed) { R = stashed; return show(); }
+
+    if (!session.mobile) {
+      document.getElementById('loading').innerHTML = '';
+      return showMsg('err', 'Please login to see this result.');
+    }
+    try {
+      const d = await api('get_result', { p_mobile: session.mobile, p_paper_id: paperId });
+      if (!d || d.success !== true) throw new Error((d && d.error) || 'RESULT_NOT_FOUND');
+      R = d; show();
+    } catch (e) {
+      document.getElementById('loading').innerHTML = '';
+      showMsg('err', errorText(e.message));
+    }
+  }
+
+  function show() {
+    document.getElementById('loading').innerHTML = '';
+    document.getElementById('content').classList.remove('hidden');
+
+    document.getElementById('h-score').textContent = R.score;
+    document.getElementById('h-max').textContent =
+      (lang() === 'kn' ? 'ಒಟ್ಟು ' : 'out of ') + R.maxScore;
+    document.getElementById('h-pct').textContent = (R.percentage || 0) + '%';
+
+    document.getElementById('s-correct').textContent = R.correct;
+    document.getElementById('s-wrong').textContent   = R.wrong;
+    document.getElementById('s-skip').textContent    = R.unattempted;
+    document.getElementById('s-acc').textContent     = (R.accuracy || 0) + '%';
+
+    const cert = document.getElementById('a-cert');
+    if (R.certificateId) cert.href = 'certificate.html?id=' + encodeURIComponent(R.certificateId);
+    else cert.classList.add('hidden');
+
+    document.getElementById('a-share').href = 'https://wa.me/?text=' + encodeURIComponent(
+      'I scored ' + R.score + '/' + R.maxScore + ' on Namma Exam. Try it free: ' + 'https://nammaexam.in'
+    );
+
+    renderDifficulty();
+    renderReview();
+    applyLang();
+
+    // Ask about the WhatsApp group only now — a score on screen is the moment
+    // someone actually wants notes and updates. Never on arrival.
+    setTimeout(offerCommunity, 1200);
+  }
+
+  function renderDifficulty() {
+    const rows = [
+      ['Easy',   R.easyCorrect,   R.easyTotal,   'var(--green)'],
+      ['Medium', R.mediumCorrect, R.mediumTotal, 'var(--gold)'],
+      ['Hard',   R.hardCorrect,   R.hardTotal,   'var(--red)'],
+    ].filter(function (r) { return Number(r[2]) > 0; });
+
+    // Papers with no Easy/Medium/Hard tagging just hide this card rather
+    // than showing three empty bars.
+    if (!rows.length) return;
+    document.getElementById('diff-card').classList.remove('hidden');
+    document.getElementById('diff-rows').innerHTML = rows.map(function (r) {
+      const pct = Math.round(Number(r[1]) / Number(r[2]) * 100);
+      return '<div class="diff-row">' +
+        '<span class="k">' + r[0] + '</span>' +
+        '<span class="bar"><span style="width:' + pct + '%;background:' + r[3] + '"></span></span>' +
+        '<span class="v">' + r[1] + '/' + r[2] + '</span>' +
+      '</div>';
+    }).join('');
+  }
+
+  function setRF(f, btn) {
+    rf = f;
+    document.querySelectorAll('.rf').forEach(function (b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    renderReview();
+  }
+
+  function renderReview() {
+    const letters = ['A','B','C','D'];
+    const list = (R.review || []).filter(function (it) {
+      const skipped = it.given === null || it.given === undefined;
+      const wrong = !skipped && Number(it.given) !== Number(it.correct);
+      if (rf === 'wrong')   return wrong;
+      if (rf === 'skipped') return skipped;
+      return true;
+    });
+
+    const box = document.getElementById('review');
+    if (!list.length) {
+      box.innerHTML = '<p class="muted center" style="padding:20px">Nothing here — well done.</p>';
+      return;
+    }
+
+    box.innerHTML = list.map(function (it, n) {
+      const opts = [
+        pick(it.optionAEn, it.optionAKn), pick(it.optionBEn, it.optionBKn),
+        pick(it.optionCEn, it.optionCKn), pick(it.optionDEn, it.optionDKn),
+      ];
+      const skipped = it.given === null || it.given === undefined;
+      const right   = !skipped && Number(it.given) === Number(it.correct);
+
+      let body = '<div class="ritem">';
+      if (it.subject) body += '<span class="rtag">' + esc(it.subject) + '</span>';
+      if (it.topic)   body += '<span class="rtag">' + esc(it.topic) + '</span>';
+      body += '<div class="rq"><b>' + (n + 1) + '.</b> ' + qtext(pick(it.questionEn, it.questionKn)) + '</div>';
+      if (it.imageQuestion) {
+        body += '<img class="rimg" src="' + esc(SITE.imageBase + it.imageQuestion) + '.png" alt="" ' +
+                'onerror="this.style.display=\'none\'">';
+      }
+
+      if (skipped) {
+        body += '<div class="ropt skip">' + (lang() === 'kn' ? 'ನೀವು ಉತ್ತರಿಸಲಿಲ್ಲ' : 'You did not answer') + '</div>';
+        body += '<div class="ropt ok">✓ ' + letters[it.correct] + '. ' + esc(opts[it.correct] || '') + '</div>';
+      } else if (right) {
+        body += '<div class="ropt ok">✓ ' + letters[it.given] + '. ' + esc(opts[it.given] || '') + '</div>';
+      } else {
+        body += '<div class="ropt bad">✗ ' + letters[it.given] + '. ' + esc(opts[it.given] || '') + '</div>';
+        body += '<div class="ropt ok">✓ ' + letters[it.correct] + '. ' + esc(opts[it.correct] || '') + '</div>';
+      }
+
+      const exp = pick(it.explanationEn, it.explanationKn);
+      if (exp) body += '<div class="rexp">' + qtext(exp) + '</div>';
+      return body + '</div>';
+    }).join('');
+  }
+
+  document.addEventListener('ne:lang', function () { if (R) { renderReview(); applyLang(); } });
+  load();
+</script>
+
+</body>
+</html>

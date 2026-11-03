@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exam — Namma Exam</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0d2b4e">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&family=Inter:wght@400;500;600;700&family=Noto+Serif+Kannada:wght@600;700&family=Noto+Sans+Kannada:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  /* This page deliberately has NO header, footer, tab bar or clickable logo.
+     Every one of those is an accidental exit during a live timed exam.
+     Carried over from v2, where the rule was set and repeated on purpose. */
+
+  body{ padding-bottom:0; background:var(--paper); }
+
+  .exam-top{
+    position:sticky; top:0; z-index:30;
+    background:var(--navy); color:#fff;
+    padding-top:env(safe-area-inset-top);
+  }
+  .exam-top-inner{ display:flex; align-items:center; gap:10px; padding:10px 14px; }
+  .timer{
+    font-family:var(--font-head); font-weight:700; font-size:1.05rem;
+    background:rgba(255,255,255,.12); padding:5px 12px; border-radius:999px;
+    font-variant-numeric:tabular-nums;
+  }
+  .timer.low{ background:var(--red); animation:pulse 1s ease-in-out infinite; }
+  @keyframes pulse{ 50%{ opacity:.65 } }
+  .paper-id{ font-size:0.76rem; color:rgba(255,255,255,.7); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .top-btn{ background:transparent; border:1.4px solid rgba(255,255,255,.45); color:#fff;
+            border-radius:999px; padding:6px 12px; font-size:0.76rem; cursor:pointer; }
+
+  .qbar{ display:flex; align-items:center; gap:8px; padding:9px 14px; background:#fff; border-bottom:1px solid var(--line); }
+  .qnum{ font-weight:700; color:var(--navy); font-size:0.9rem; }
+  .qdiff{ font-size:0.66rem; padding:2px 8px; border-radius:999px; }
+  .qdiff.easy{ background:var(--green-soft); color:var(--green); }
+  .qdiff.medium{ background:#fff3d9; color:#8a6100; }
+  .qdiff.hard{ background:var(--red-soft); color:var(--red); }
+  .answered-count{ margin-left:auto; font-size:0.74rem; color:var(--ink-soft); }
+
+  .qwrap{ padding:16px 14px 150px; max-width:760px; margin:0 auto; }
+  .qtext{ font-size:1.02rem; line-height:1.6; margin-bottom:14px; }
+  .qimg{ max-width:100%; border:1px solid var(--line); border-radius:8px; margin-bottom:14px; }
+
+  .opt{
+    display:flex; align-items:flex-start; gap:11px;
+    background:#fff; border:1.6px solid var(--line); border-radius:10px;
+    padding:13px; margin-bottom:9px; cursor:pointer; width:100%; text-align:left;
+    min-height:48px;
+  }
+  .opt.sel{ border-color:var(--navy); background:var(--navy-soft); }
+  .opt-key{
+    width:26px; height:26px; flex:0 0 26px; border-radius:50%;
+    background:var(--navy-soft); color:var(--navy);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:0.8rem;
+  }
+  .opt.sel .opt-key{ background:var(--navy); color:#fff; }
+  .opt-text{ flex:1; font-size:0.94rem; line-height:1.45; }
+
+  .bottom{
+    position:fixed; left:0; right:0; bottom:0; z-index:28;
+    background:#fff; border-top:1px solid var(--line);
+    padding:9px 12px calc(9px + env(safe-area-inset-bottom));
+  }
+  .bottom-row{ display:flex; gap:8px; max-width:760px; margin:0 auto; }
+  .bottom-row .btn{ flex:1; }
+
+  .palette{
+    position:fixed; inset:0; z-index:60; background:rgba(13,43,78,.55);
+    display:none; align-items:flex-end;
+  }
+  .palette.show{ display:flex; }
+  .palette-inner{
+    background:#fff; width:100%; max-height:76vh; overflow:auto;
+    border-radius:16px 16px 0 0; padding:16px 14px calc(16px + env(safe-area-inset-bottom));
+  }
+  .pfilters{ display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+  .pf{ border:1.4px solid var(--line); background:#fff; border-radius:999px;
+       padding:5px 11px; font-size:0.74rem; cursor:pointer; }
+  .pf.active{ background:var(--navy); color:#fff; border-color:var(--navy); }
+  .pgrid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(42px,1fr)); gap:7px; }
+  .pbtn{
+    aspect-ratio:1; border:1.4px solid var(--line); background:#fff;
+    border-radius:8px; font-size:0.8rem; font-weight:600; cursor:pointer; color:var(--ink);
+  }
+  .pbtn.answered{ background:var(--green); border-color:var(--green); color:#fff; }
+  .pbtn.marked{ background:var(--gold); border-color:var(--gold); color:#fff; }
+  .pbtn.visited{ background:#eee; }
+  .pbtn.current{ outline:3px solid var(--navy); outline-offset:1px; }
+  .pbtn.hide{ display:none; }
+  .legend{ display:flex; gap:12px; flex-wrap:wrap; font-size:0.72rem; color:var(--ink-soft); margin-top:12px; }
+  .dot{ display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:4px; vertical-align:-1px; }
+
+  .center-screen{
+    position:fixed; inset:0; z-index:90; background:var(--paper);
+    display:none; flex-direction:column; align-items:center; justify-content:center; padding:24px;
+  }
+  .center-screen.show{ display:flex; }
+  .countdown-num{ font-family:var(--font-head); font-size:5rem; color:var(--navy); font-weight:700; }
+
+  .warn{
+    position:fixed; left:12px; right:12px; top:70px; z-index:55;
+    background:var(--red-soft); color:var(--red); border:1px solid var(--red);
+    border-radius:10px; padding:11px 13px; font-size:0.84rem; display:none;
+  }
+  .warn.show{ display:block; }
+
+  .save-pill{
+    position:fixed; right:12px; bottom:76px; z-index:29;
+    background:var(--green); color:#fff; font-size:0.72rem;
+    padding:5px 11px; border-radius:999px; opacity:0; transition:opacity .25s;
+  }
+  .save-pill.show{ opacity:1; }
+
+  /* Report a broken question.
+     This is the ONLY outward link on the exam page, and it opens in a new
+     tab so the exam is never navigated away from. It sits below the
+     question rather than near the controls, for the same reason. */
+  .report{
+    margin-top:26px; padding:13px 14px;
+    background:#fff3d9; border:1px solid #e8c877; border-radius:10px;
+  }
+  .report b{ display:block; color:#8a6100; font-size:0.86rem; margin-bottom:3px; }
+  .report p{ font-size:0.78rem; color:#7a5800; line-height:1.5; margin-bottom:9px; }
+  .report a{
+    display:inline-block; background:#8a6100; color:#fff;
+    padding:8px 15px; border-radius:8px; font-size:0.8rem; font-weight:700;
+  }
+</style>
+</head>
+<body>
+
+<!-- countdown before the exam opens -->
+<div class="center-screen show" id="countdown">
+  <div class="muted" data-en="Your exam starts in" data-kn="ಪರೀಕ್ಷೆ ಪ್ರಾರಂಭವಾಗುತ್ತದೆ">Your exam starts in</div>
+  <div class="countdown-num" id="cd-num">5</div>
+</div>
+
+<div class="center-screen" id="fatal">
+  <h2 id="fatal-msg" style="text-align:center"></h2>
+  <a class="btn btn-navy" style="margin-top:16px" href="browse.html"
+     data-en="Back to papers" data-kn="ಪತ್ರಿಕೆಗಳಿಗೆ ಹಿಂತಿರುಗಿ">Back to papers</a>
+</div>
+
+<div class="center-screen" id="submitting">
+  <div id="submitting-loader"></div>
+</div>
+
+<!-- the exam itself -->
+<div id="shell" class="hidden">
+  <div class="exam-top">
+    <div class="exam-top-inner">
+      <span class="timer" id="timer">--:--</span>
+      <span class="paper-id" id="paper-id"></span>
+      <button class="top-btn" id="btn-exit" onclick="exitExam()"></button>
+    </div>
+  </div>
+
+  <div class="qbar">
+    <span class="qnum" id="qnum"></span>
+    <span class="qdiff hidden" id="qdiff"></span>
+    <span class="answered-count" id="acount"></span>
+  </div>
+
+  <div class="qwrap">
+    <div class="qtext" id="qtext"></div>
+    <img class="qimg hidden" id="qimg" alt="">
+    <div id="opts"></div>
+    <button class="btn btn-ghost btn-sm" style="margin-top:4px" onclick="clearAnswer()"
+            data-en="Clear answer" data-kn="ಉತ್ತರ ಅಳಿಸಿ">Clear answer</button>
+
+    <div class="report">
+      <b data-en="Something wrong with this question?"
+         data-kn="ಈ ಪ್ರಶ್ನೆಯಲ್ಲಿ ಏನಾದರೂ ತಪ್ಪಿದೆಯೇ?">Something wrong with this question?</b>
+      <p data-en="If the question is missing, the image will not load, or the options are blank — tell us. Take a screenshot first, it helps us fix it faster. Your exam stays open."
+         data-kn="ಪ್ರಶ್ನೆ ಕಾಣಿಸದಿದ್ದರೆ, ಚಿತ್ರ ಬರದಿದ್ದರೆ ಅಥವಾ ಆಯ್ಕೆಗಳು ಖಾಲಿ ಇದ್ದರೆ ನಮಗೆ ತಿಳಿಸಿ. ಮೊದಲು ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ತೆಗೆದುಕೊಳ್ಳಿ. ನಿಮ್ಮ ಪರೀಕ್ಷೆ ತೆರೆದೇ ಇರುತ್ತದೆ.">If the question is missing, the image will not load, or the options are blank — tell us. Take a screenshot first, it helps us fix it faster. Your exam stays open.</p>
+      <a id="report-link" target="_blank" rel="noopener"
+         data-en="Report this question" data-kn="ಈ ಪ್ರಶ್ನೆ ವರದಿ ಮಾಡಿ">Report this question</a>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="bottom-row">
+      <button class="btn btn-ghost" onclick="go(-1)" data-en="Back" data-kn="ಹಿಂದೆ">Back</button>
+      <button class="btn btn-ghost" onclick="toggleMark()" id="btn-mark"
+              data-en="Mark" data-kn="ಗುರುತು">Mark</button>
+      <button class="btn btn-ghost" onclick="openPalette()" data-en="All" data-kn="ಎಲ್ಲಾ">All</button>
+      <button class="btn btn-primary" onclick="go(1)" data-en="Next" data-kn="ಮುಂದೆ">Next</button>
+    </div>
+  </div>
+
+  <div class="warn" id="tabwarn"></div>
+  <div class="save-pill" id="savepill" data-en="Saved" data-kn="ಉಳಿಸಲಾಗಿದೆ">Saved</div>
+</div>
+
+<!-- question palette -->
+<div class="palette" id="palette" onclick="if(event.target===this) closePalette()">
+  <div class="palette-inner">
+    <div class="pfilters">
+      <button class="pf active" data-f="all"        onclick="setFilter('all',this)">All</button>
+      <button class="pf" data-f="answered"   onclick="setFilter('answered',this)">Answered</button>
+      <button class="pf" data-f="unanswered" onclick="setFilter('unanswered',this)">Not answered</button>
+      <button class="pf" data-f="marked"     onclick="setFilter('marked',this)">Marked</button>
+    </div>
+    <div class="pgrid" id="pgrid"></div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--green)"></i>Answered</span>
+      <span><i class="dot" style="background:var(--gold)"></i>Marked</span>
+      <span><i class="dot" style="background:#eee"></i>Seen</span>
+    </div>
+    <button class="btn btn-navy btn-block" style="margin-top:14px" onclick="confirmSubmit()"
+            data-en="Submit exam" data-kn="ಪರೀಕ್ಷೆ ಸಲ್ಲಿಸಿ">Submit exam</button>
+    <button class="btn btn-ghost btn-block" style="margin-top:8px" onclick="closePalette()"
+            data-en="Keep going" data-kn="ಮುಂದುವರಿಸಿ">Keep going</button>
+  </div>
+</div>
+
+<!-- submit confirmation -->
+<div class="overlay" id="confirm">
+  <div class="sheet">
+    <h2 data-en="Submit your exam?" data-kn="ಪರೀಕ್ಷೆ ಸಲ್ಲಿಸುವುದೇ?">Submit your exam?</h2>
+    <div id="confirm-stats" class="muted" style="margin:10px 0 14px"></div>
+    <div class="msg msg-info show" id="confirm-warn" style="display:none"></div>
+    <button class="btn btn-primary btn-block" onclick="submitExam()"
+            data-en="Yes, submit" data-kn="ಹೌದು, ಸಲ್ಲಿಸಿ">Yes, submit</button>
+    <button class="btn btn-ghost btn-block" style="margin-top:8px"
+            onclick="document.getElementById('confirm').classList.remove('show')"
+            data-en="Keep going" data-kn="ಮುಂದುವರಿಸಿ">Keep going</button>
+  </div>
+</div>
+
+<!-- anonymous gate -->
+<div class="overlay" id="gate">
+  <div class="sheet">
+    <h2 data-en="See your score" data-kn="ನಿಮ್ಮ ಅಂಕ ನೋಡಿ">See your score</h2>
+    <p class="muted" style="margin:7px 0 14px"
+       data-en="Register free to see your result, save it and get your certificate."
+       data-kn="ಫಲಿತಾಂಶ ನೋಡಲು ಉಚಿತವಾಗಿ ನೋಂದಾಯಿಸಿ.">Register free to see your result, save it and get your certificate.</p>
+
+    <div class="tabs">
+      <button class="tab-btn active" id="gt-r" onclick="gateTab('r')"
+              data-en="Register" data-kn="ನೋಂದಣಿ">Register</button>
+      <button class="tab-btn" id="gt-l" onclick="gateTab('l')"
+              data-en="Login" data-kn="ಲಾಗಿನ್">Login</button>
+    </div>
+
+    <div class="panel active" id="gp-r">
+      <div class="field"><input type="tel" id="g-mobile" maxlength="10" inputmode="numeric"
+           data-ph data-en="10-digit mobile" data-kn="ಮೊಬೈಲ್ ಸಂಖ್ಯೆ"></div>
+      <div class="field"><input type="text" id="g-name"
+           data-ph data-en="Your name" data-kn="ನಿಮ್ಮ ಹೆಸರು"></div>
+      <div class="field"><input type="password" id="g-pw"
+           data-ph data-en="Choose a password" data-kn="ಪಾಸ್‌ವರ್ಡ್"></div>
+      <button class="btn btn-primary btn-block" onclick="gateRegister()"
+              data-en="Register and see result" data-kn="ನೋಂದಾಯಿಸಿ">Register and see result</button>
+    </div>
+
+    <div class="panel" id="gp-l">
+      <div class="field"><input type="tel" id="gl-mobile" maxlength="10" inputmode="numeric"
+           data-ph data-en="10-digit mobile" data-kn="ಮೊಬೈಲ್ ಸಂಖ್ಯೆ"></div>
+      <div class="field"><input type="password" id="gl-pw"
+           data-ph data-en="Password" data-kn="ಪಾಸ್‌ವರ್ಡ್"></div>
+      <button class="btn btn-navy btn-block" onclick="gateLogin()"
+              data-en="Login and see result" data-kn="ಲಾಗಿನ್">Login and see result</button>
+    </div>
+
+    <div class="msg" id="gate-msg"></div>
+    <div class="msg msg-info" id="gate-warn" style="margin-top:10px"></div>
+    <button class="btn btn-ghost btn-block" style="margin-top:10px" onclick="notNow()"
+            data-en="Not now" data-kn="ಈಗ ಬೇಡ">Not now</button>
+  </div>
+</div>
+
+<!-- unsaved score for the anonymous path -->
+<div class="center-screen" id="unsaved">
+  <div class="card" style="max-width:380px; width:100%; text-align:center">
+    <span class="badge badge-warn" data-en="Not saved" data-kn="ಉಳಿಸಿಲ್ಲ">Not saved</span>
+    <h2 style="margin:12px 0 4px" data-en="Your score" data-kn="ನಿಮ್ಮ ಅಂಕ">Your score</h2>
+    <div id="u-score" style="font-family:var(--font-head); font-size:2.4rem; color:var(--navy); font-weight:700"></div>
+    <div class="muted" id="u-stats" style="margin:8px 0 16px"></div>
+    <a class="btn btn-primary btn-block" href="auth.html?tab=register"
+       data-en="Register to save it" data-kn="ಉಳಿಸಲು ನೋಂದಾಯಿಸಿ">Register to save it</a>
+    <a class="btn btn-ghost btn-block" style="margin-top:8px" href="browse.html"
+       data-en="Back to papers" data-kn="ಪತ್ರಿಕೆಗಳಿಗೆ">Back to papers</a>
+  </div>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+/* ==========================================================================
+   STATE
+   ========================================================================== */
+const paperId = new URLSearchParams(location.search).get('paper');
+const session = Session.get();
+
+let anon      = !session.mobile;
+let mobile    = session.mobile || null;
+let questions = [];
+let answers   = {};     // questionId -> 0..3
+let marked    = {};     // questionId -> true
+let visited   = {};
+let times     = {};     // questionId -> seconds
+let idx = 0, timeLeft = 0, fullTime = 0, violations = 0;
+let timerH = null, autoH = null, qStart = 0;
+let submitted = false, filter = 'all', notNowCount = 0, gateOpen = false;
+let pbtns = [];
+
+const LKEY = 'ne_exam_' + (mobile || 'anon') + '_' + paperId;
+
+// one source of truth for the form URL — it lives in app.js
+document.getElementById('report-link').href = SITE.reportForm;
+
+/* ==========================================================================
+   LOCAL STATE  — the fix that matters most on this page
+   --------------------------------------------------------------------------
+   v2 autosaved straight to the server every 30s and swallowed every failure
+   with an empty catch. Anonymous users had no save at all. On rural mobile
+   data a dropped connection silently cost a student an hour of work.
+
+   Here every single tap writes to localStorage first — instant, offline,
+   cannot fail. The network save becomes a best-effort sync on top of a copy
+   that is already safe.
+   ========================================================================== */
+function saveLocal() {
+  try {
+    localStorage.setItem(LKEY, JSON.stringify({
+      answers: answers, marked: marked, visited: visited, times: times,
+      idx: idx, timeLeft: timeLeft, violations: violations, at: Date.now(),
+    }));
+  } catch (e) {}
+}
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(LKEY);
+    if (!raw) return null;
+    const s = JSON.parse(raw);
+    // ignore anything older than 24h; a stale half-exam is more confusing than none
+    if (Date.now() - (s.at || 0) > 864e5) { localStorage.removeItem(LKEY); return null; }
+    return s;
+  } catch (e) { return null; }
+}
+function clearLocal() { try { localStorage.removeItem(LKEY); } catch (e) {} }
+
+/* ==========================================================================
+   BOOT
+   ========================================================================== */
+async function init() {
+  if (!paperId) return fatal('No paper was selected.');
+
+  const ready = anon
+    ? api('get_questions_public', { p_paper_id: paperId })
+    : api('start_exam', { p_mobile: mobile, p_paper_id: paperId });
+
+  await countdown();
+
+  let d;
+  try { d = await ready; }
+  catch (e) { return fatal(errorText(e.message)); }
+
+  if (!d || d.success !== true) {
+    if (d && d.error === 'ATTEMPT_LIMIT_REACHED') {
+      return fatal('You have used all ' + d.attemptLimit + ' attempts on this paper.');
+    }
+    return fatal(errorText(d && d.error));
+  }
+
+  questions = d.questions || [];
+  if (!questions.length) return fatal('This paper has no questions yet.');
+
+  fullTime = Number(d.durationMinutes) * 60;
+  timeLeft = Number(d.timeRemainingSeconds) || fullTime;
+
+  // server state first (a logged-in resume), then anything newer kept locally
+  if (!anon) {
+    answers    = d.answers || {};
+    marked     = {};
+    (d.markedReview || []).forEach(function (q) { marked[q] = true; });
+    times      = d.questionTimes || {};
+    violations = Number(d.tabViolations) || 0;
+    idx        = Math.max(0, Math.min(questions.length - 1, (Number(d.currentQuestion) || 1) - 1));
+  }
+
+  const local = loadLocal();
+  if (local && Object.keys(local.answers || {}).length >= Object.keys(answers).length) {
+    answers = local.answers || answers;
+    marked  = local.marked  || marked;
+    visited = local.visited || {};
+    times   = local.times   || times;
+    idx     = local.idx     || idx;
+    violations = Math.max(violations, local.violations || 0);
+    if (local.timeLeft) timeLeft = Math.min(timeLeft || fullTime, local.timeLeft);
+  }
+
+  document.getElementById('paper-id').textContent = paperId + (anon ? ' · Free trial' : '');
+  document.getElementById('shell').classList.remove('hidden');
+  updateExitLabel();
+
+  buildPalette();
+  showQuestion();
+  startTimer();
+  if (!anon) autoH = setInterval(syncToServer, 30000);
+
+  document.addEventListener('visibilitychange', onHide);
+  document.addEventListener('keydown', onKey);
+  window.addEventListener('beforeunload', onLeave);
+  applyLang();
+}
+
+function countdown() {
+  return new Promise(function (done) {
+    let n = 5;
+    const el = document.getElementById('cd-num');
+    const t = setInterval(function () {
+      n--;
+      if (n <= 0) {
+        clearInterval(t);
+        document.getElementById('countdown').classList.remove('show');
+        done();
+      } else { el.textContent = n; }
+    }, 1000);
+  });
+}
+
+function fatal(msg) {
+  document.getElementById('countdown').classList.remove('show');
+  document.getElementById('fatal-msg').textContent = msg;
+  document.getElementById('fatal').classList.add('show');
+}
+
+/* ==========================================================================
+   RENDER
+   ========================================================================== */
+function showQuestion() {
+  bankTime();                      // close the clock on the question we are leaving
+  const q = questions[idx];
+  visited[q.questionId] = true;
+  qStart = Date.now();
+
+  document.getElementById('qnum').textContent =
+    (lang() === 'kn' ? 'ಪ್ರಶ್ನೆ ' : 'Question ') + (idx + 1) +
+    (lang() === 'kn' ? ' / ' : ' of ') + questions.length;
+
+  const dEl = document.getElementById('qdiff');
+  const diff = (q.difficulty || '').toLowerCase();
+  if (['easy','medium','hard'].indexOf(diff) !== -1) {
+    dEl.textContent = q.difficulty; dEl.className = 'qdiff ' + diff;
+  } else { dEl.className = 'qdiff hidden'; }
+
+  // pick() falls back BOTH ways — a Kannada-only paper has no English text
+  document.getElementById('qtext').innerHTML = qtext(pick(q.questionEn, q.questionKn));
+
+  const img = document.getElementById('qimg');
+  if (q.imageQuestion) {
+    img.src = SITE.imageBase + q.imageQuestion + '.png';
+    img.className = 'qimg';
+    img.onerror = function () { img.className = 'qimg hidden'; };
+  } else { img.className = 'qimg hidden'; }
+
+  const letters = ['A','B','C','D'];
+  const opts = [
+    pick(q.optionAEn, q.optionAKn), pick(q.optionBEn, q.optionBKn),
+    pick(q.optionCEn, q.optionCKn), pick(q.optionDEn, q.optionDKn),
+  ];
+  const chosen = answers[q.questionId];
+  document.getElementById('opts').innerHTML = opts.map(function (text, i) {
+    if (!text) return '';
+    return '<button class="opt' + (chosen === i ? ' sel' : '') + '" onclick="choose(' + i + ')">' +
+             '<span class="opt-key">' + letters[i] + '</span>' +
+             '<span class="opt-text">' + esc(text) + '</span>' +
+           '</button>';
+  }).join('');
+
+  document.getElementById('btn-mark').textContent =
+    marked[q.questionId] ? (lang() === 'kn' ? 'ಗುರುತು ತೆಗೆ' : 'Unmark')
+                         : (lang() === 'kn' ? 'ಗುರುತು' : 'Mark');
+
+  updateCount();
+  paintPalette();
+}
+
+function updateCount() {
+  const n = Object.keys(answers).length;
+  document.getElementById('acount').innerHTML = '<b>' + n + '</b> / ' + questions.length;
+}
+
+/* --------------------------------------------------------------------------
+   PALETTE — built once, then only the classes change.
+   v2 rebuilt all 180 buttons with innerHTML on every single option tap,
+   which is the most repeated interaction in the whole app and the jankiest
+   thing it did on a cheap phone.
+   ----------------------------------------------------------------------- */
+function buildPalette() {
+  const grid = document.getElementById('pgrid');
+  grid.innerHTML = '';
+  pbtns = questions.map(function (q, i) {
+    const b = document.createElement('button');
+    b.className = 'pbtn';
+    b.textContent = i + 1;
+    b.onclick = function () { jump(i); };
+    grid.appendChild(b);
+    return b;
+  });
+}
+
+function paintPalette() {
+  questions.forEach(function (q, i) {
+    const b = pbtns[i]; if (!b) return;
+    const a = answers[q.questionId] !== undefined;
+    const m = !!marked[q.questionId];
+    let cls = 'pbtn';
+    if (m) cls += ' marked'; else if (a) cls += ' answered'; else if (visited[q.questionId]) cls += ' visited';
+    if (i === idx) cls += ' current';
+    if ((filter === 'answered'   && !a) ||
+        (filter === 'unanswered' && a)  ||
+        (filter === 'marked'     && !m)) cls += ' hide';
+    b.className = cls;
+  });
+}
+
+/* ==========================================================================
+   ACTIONS
+   ========================================================================== */
+function choose(i) {
+  const q = questions[idx];
+  answers[q.questionId] = i;
+  saveLocal();
+  document.querySelectorAll('#opts .opt').forEach(function (el, n) {
+    el.classList.toggle('sel', n === i);
+  });
+  updateCount();
+  paintPalette();
+}
+
+function clearAnswer() {
+  delete answers[questions[idx].questionId];
+  saveLocal(); showQuestion();
+}
+
+function toggleMark() {
+  const id = questions[idx].questionId;
+  marked[id] ? delete marked[id] : marked[id] = true;
+  saveLocal(); showQuestion();
+}
+
+function go(d) {
+  const n = idx + d;
+  if (n < 0 || n >= questions.length) return;
+  idx = n; saveLocal(); showQuestion();
+}
+function jump(i) { idx = i; saveLocal(); closePalette(); showQuestion(); }
+
+function openPalette()  { paintPalette(); document.getElementById('palette').classList.add('show'); }
+function closePalette() { document.getElementById('palette').classList.remove('show'); }
+function setFilter(f, btn) {
+  filter = f;
+  document.querySelectorAll('.pf').forEach(function (b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  paintPalette();
+}
+
+/** Adds the time spent on the current question to its running total. */
+function bankTime() {
+  if (!qStart || !questions[idx]) return;
+  const id = questions[idx].questionId;
+  times[id] = (times[id] || 0) + Math.round((Date.now() - qStart) / 1000);
+  qStart = Date.now();
+}
+
+/* ==========================================================================
+   TIMER
+   ========================================================================== */
+function startTimer() {
+  paintTimer();
+  timerH = setInterval(function () {
+    timeLeft--;
+    if (timeLeft <= 0) { timeLeft = 0; paintTimer(); clearInterval(timerH); submitExam(true); return; }
+    paintTimer();
+    if (timeLeft % 10 === 0) saveLocal();
+  }, 1000);
+}
+function paintTimer() {
+  const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+  const el = document.getElementById('timer');
+  el.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  el.classList.toggle('low', timeLeft <= 300);
+}
+
+/* ==========================================================================
+   SYNC  (best effort — the local copy is the real one)
+   ========================================================================== */
+async function syncToServer() {
+  if (anon || submitted) return;
+  bankTime();
+  try {
+    const r = await api('save_progress', {
+      p_mobile: mobile, p_paper_id: paperId,
+      p_answers_json: answers,
+      p_current_question: idx + 1,
+      p_marked_review_json: Object.keys(marked),
+      p_question_times_json: times,
+      p_time_remaining_seconds: timeLeft,
+      p_tab_violations: violations,
+    });
+    if (r && r.success) flashSaved();
+  } catch (e) { /* local copy already holds it */ }
+}
+function flashSaved() {
+  const p = document.getElementById('savepill');
+  p.classList.add('show');
+  setTimeout(function () { p.classList.remove('show'); }, 1400);
+}
+
+/* ==========================================================================
+   TAB SWITCHING — warn only, never auto-submit.
+   This is a practice tool, not an exam hall. Carried over from v2 on purpose.
+   ========================================================================== */
+function onHide() {
+  if (document.hidden) { violations++; saveLocal(); return; }
+  if (violations > 0) {
+    const w = document.getElementById('tabwarn');
+    w.textContent = (lang() === 'kn'
+      ? 'ನೀವು ಪರೀಕ್ಷೆಯಿಂದ ಹೊರಹೋದಿರಿ. ಎಚ್ಚರಿಕೆಗಳು: '
+      : 'You left the exam screen. Warnings: ') + violations;
+    w.classList.add('show');
+    setTimeout(function () { w.classList.remove('show'); }, 4000);
+  }
+}
+
+function onKey(e) {
+  if (/^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+  if (['1','2','3','4'].indexOf(e.key) !== -1) choose(parseInt(e.key, 10) - 1);
+  else if (e.key === 'ArrowRight' || e.key === 'Enter') go(1);
+  else if (e.key === 'ArrowLeft') go(-1);
+}
+
+function onLeave(e) {
+  if (submitted) return;
+  bankTime(); saveLocal();
+  e.preventDefault(); e.returnValue = '';
+}
+
+/* ==========================================================================
+   EXIT
+   ========================================================================== */
+function updateExitLabel() {
+  document.getElementById('btn-exit').textContent =
+    anon ? (lang() === 'kn' ? 'ನಿರ್ಗಮಿಸಿ' : 'Exit')
+         : (lang() === 'kn' ? 'ಉಳಿಸಿ ನಿರ್ಗಮಿಸಿ' : 'Save & exit');
+}
+
+async function exitExam() {
+  if (submitted) return location.href = 'dashboard.html';
+  const msg = anon
+    ? 'Your progress will not be saved to your account. Leave anyway?'
+    : 'Your progress is saved. Leave the exam?';
+  if (!confirm(msg)) return;
+
+  window.removeEventListener('beforeunload', onLeave);
+  clearInterval(timerH); clearInterval(autoH);
+
+  // wait briefly for the sync, but never trap the student behind it —
+  // v2 raced a 3s timeout against the save and could lose the attempt
+  if (!anon) { try { await Promise.race([syncToServer(), wait(2500)]); } catch (e) {} }
+  location.href = anon ? 'browse.html' : 'dashboard.html';
+}
+function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+/* ==========================================================================
+   SUBMIT
+   ========================================================================== */
+function confirmSubmit() {
+  closePalette();
+  const answered = Object.keys(answers).length;
+  const left = questions.length - answered;
+  document.getElementById('confirm-stats').innerHTML =
+    '<b>' + answered + '</b> answered · <b>' + left + '</b> not answered · <b>' +
+    Object.keys(marked).length + '</b> marked';
+  const w = document.getElementById('confirm-warn');
+  if (left > 0) { w.textContent = left + ' question(s) will be counted as unattempted.'; w.style.display = 'block'; }
+  else w.style.display = 'none';
+  document.getElementById('confirm').classList.add('show');
+}
+
+async function submitExam(auto) {
+  if (submitted) return;
+  submitted = true;
+  bankTime();
+  clearInterval(timerH); clearInterval(autoH);
+  document.getElementById('confirm').classList.remove('show');
+  window.removeEventListener('beforeunload', onLeave);
+
+  if (anon) { openGate(); return; }
+  await finalize();
+}
+
+async function finalize() {
+  showLoader('submitting-loader', 'Checking your answers...');
+  document.getElementById('submitting').classList.add('show');
+  try {
+    const d = await api('submit_exam', {
+      p_mobile: mobile, p_paper_id: paperId,
+      p_answers_json: answers,
+      p_question_times_json: times,
+      p_time_taken_seconds: Math.max(0, fullTime - timeLeft),
+      p_tab_violations: violations,
+    });
+    if (!d || d.success !== true) throw new Error((d && d.error) || 'PUSH_FAILED');
+    clearLocal();
+    try { localStorage.setItem('nec_last_result', JSON.stringify(d)); } catch (e) {}
+    location.href = 'result.html?paper=' + encodeURIComponent(paperId);
+  } catch (e) {
+    document.getElementById('submitting').classList.remove('show');
+    submitted = false;
+    // local copy is intact, so retrying is genuinely safe
+    alert('Could not submit: ' + errorText(e.message) + '\n\nYour answers are still saved on this phone. Please try again.');
+    startTimer();
+  }
+}
+
+/* ==========================================================================
+   ANONYMOUS GATE
+   ========================================================================== */
+function openGate() {
+  gateOpen = true; notNowCount = 0;
+  document.getElementById('gate-warn').classList.remove('show');
+  document.getElementById('gate').classList.add('show');
+  // stop the hardware back button dismissing the gate by accident
+  history.pushState({ gate: 1 }, '', location.href);
+  window.addEventListener('popstate', onGateBack);
+  applyLang();
+}
+function onGateBack() {
+  if (!gateOpen) return;
+  history.pushState({ gate: 1 }, '', location.href);
+  notNow();
+}
+function closeGateTrap() {
+  gateOpen = false;
+  window.removeEventListener('popstate', onGateBack);
+}
+function gateTab(w) {
+  document.getElementById('gt-r').classList.toggle('active', w === 'r');
+  document.getElementById('gt-l').classList.toggle('active', w === 'l');
+  document.getElementById('gp-r').classList.toggle('active', w === 'r');
+  document.getElementById('gp-l').classList.toggle('active', w === 'l');
+  hideMsg('gate-msg');
+}
+
+async function gateRegister() {
+  const m = document.getElementById('g-mobile').value.trim();
+  const n = document.getElementById('g-name').value.trim();
+  const p = document.getElementById('g-pw').value;
+  if (!/^\d{10}$/.test(m)) return showMsg('gate-msg', errorText('INVALID_MOBILE'));
+  if (!n) return showMsg('gate-msg', errorText('NAME_REQUIRED'));
+  if (p.length < 4) return showMsg('gate-msg', errorText('PASSWORD_TOO_SHORT'));
+  try {
+    const d = await api('register_student', { p_mobile: m, p_name: n, p_password: p });
+    if (d && d.alreadyRegistered) { gateTab('l'); document.getElementById('gl-mobile').value = m;
+      return showMsg('gate-msg', 'That number already has an account — please login.'); }
+    if (!d || d.success !== true) return showMsg('gate-msg', errorText(d && d.error));
+    afterGateAuth(d.mobile, d.name);
+  } catch (e) { showMsg('gate-msg', errorText(e.message)); }
+}
+
+async function gateLogin() {
+  const m = document.getElementById('gl-mobile').value.trim();
+  const p = document.getElementById('gl-pw').value;
+  if (!/^\d{10}$/.test(m)) return showMsg('gate-msg', errorText('INVALID_MOBILE'));
+  try {
+    const d = await api('login_student', { p_mobile: m, p_password: p });
+    if (!d || d.success !== true) return showMsg('gate-msg', errorText(d && d.error));
+    afterGateAuth(d.mobile, d.name);
+  } catch (e) { showMsg('gate-msg', errorText(e.message)); }
+}
+
+function afterGateAuth(m, name) {
+  Session.set(m, name);
+  mobile = m; anon = false;
+  closeGateTrap();
+  document.getElementById('gate').classList.remove('show');
+  finalize();
+}
+
+/** Two taps to leave: the first explains the cost, the second accepts it. */
+async function notNow() {
+  notNowCount++;
+  if (notNowCount === 1) {
+    const w = document.getElementById('gate-warn');
+    w.textContent = lang() === 'kn'
+      ? 'ಈಗ ಹೋದರೆ ನಿಮ್ಮ ಅಂಕ ಉಳಿಯುವುದಿಲ್ಲ.'
+      : 'Your score will not be saved if you leave now.';
+    w.classList.add('show');
+    return;
+  }
+  closeGateTrap();
+  document.getElementById('gate').classList.remove('show');
+  try {
+    const d = await api('score_only', { p_paper_id: paperId, p_answers_json: answers });
+    if (!d || d.success !== true) throw new Error((d && d.error) || 'PAPER_LOCKED');
+    clearLocal();
+    document.getElementById('u-score').textContent = d.score + ' / ' + d.maxScore;
+    document.getElementById('u-stats').textContent =
+      d.correct + ' correct · ' + d.wrong + ' wrong · ' + d.unattempted + ' unattempted';
+    document.getElementById('shell').classList.add('hidden');
+    document.getElementById('unsaved').classList.add('show');
+    applyLang();
+  } catch (e) { alert(errorText(e.message)); }
+}
+
+document.addEventListener('ne:lang', function () { if (questions.length) { showQuestion(); updateExitLabel(); } });
+init();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Namma Exam — Karnataka Government Job Exam Practice</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d2b4e">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&family=Inter:wght@400;500;600;700&family=Noto+Serif+Kannada:wght@600;700&family=Noto+Sans+Kannada:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy: #0d2b4e;
+    --navy-2: #14396b;
+    --navy-soft: #eaf0f6;
+    --gold: #c9942c;
+    --gold-light: #e8b954;
+    --paper: #f6f3ec;
+    --ink: #1b1f2a;
+    --ink-soft: #565f6e;
+    --green: #1f7a4d;
+    --green-soft: #e6f3ec;
+    --whatsapp: #25D366;
+    --telegram: #229ED9;
+    --line: #dcd6c8;
+    --radius: 10px;
+    --font-head-en: 'Roboto Slab', serif;
+    --font-body-en: 'Inter', sans-serif;
+    --font-head-kn: 'Noto Serif Kannada', serif;
+    --font-body-kn: 'Noto Sans Kannada', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body-en);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  body.lang-kn{ font-family: var(--font-body-kn); }
+  body.lang-kn h1, body.lang-kn h2, body.lang-kn h3, body.lang-kn .brand-name{ font-family: var(--font-head-kn); }
+  h1,h2,h3{ font-family: var(--font-head-en); color: var(--navy); line-height:1.2; }
+  a{ color: inherit; text-decoration:none; }
+  img{max-width:100%; display:block;}
+  .wrap{ max-width:1160px; margin:0 auto; padding:0 24px; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  /* ===== Header ===== */
+  header{
+    position: sticky; top:0; z-index: 50;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+  }
+  .header-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 14px 0;
+  }
+  .brand-row{ display:flex; align-items:center; gap:10px; }
+  .brand-row img{ height:32px; width:auto; }
+  .brand{ display:flex; flex-direction:column; }
+  .brand-name{
+    font-family: var(--font-head-en);
+    font-size: 1.35rem; font-weight:700; color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .brand-name span{ color: var(--gold); }
+  .brand-tag{ font-size: 0.68rem; color: var(--ink-soft); letter-spacing:0.04em; text-transform:uppercase; margin-top:2px; }
+  .header-actions{ display:flex; align-items:center; gap:12px; }
+  .nav-links{ display:flex; align-items:center; gap:10px; }
+
+  .menu-toggle{
+    display:none; flex-direction:column; justify-content:center; align-items:center;
+    gap:5px; width:38px; height:38px; border:1.5px solid var(--navy); border-radius:8px;
+    background:transparent; padding:0; flex-shrink:0;
+  }
+  .menu-toggle span{
+    display:block; width:16px; height:2px; background:var(--navy); border-radius:2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .menu-toggle.open span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+  .menu-toggle.open span:nth-child(2){ opacity:0; }
+  .menu-toggle.open span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu{
+    display:none; flex-direction:column;
+    position:absolute; top:100%; left:0; right:0;
+    background:#fff; border-bottom:1px solid var(--line);
+    box-shadow: 0 16px 30px -14px rgba(13,43,78,0.3);
+  }
+  .mobile-menu.open{ display:flex; }
+  .mobile-menu a{
+    display:flex; align-items:center; gap:12px;
+    padding:15px 24px; font-size:0.95rem; font-weight:600; color:var(--navy);
+    border-bottom:1px solid var(--line);
+  }
+  .mobile-menu a:last-child{ border-bottom:none; }
+  .mobile-menu a:active{ background:var(--navy-soft); }
+  .mobile-menu .menu-emoji{ font-size:1.15rem; width:22px; text-align:center; flex-shrink:0; }
+
+  @media (max-width: 600px){
+    .nav-links{ display:none; }
+    .menu-toggle{ display:flex; }
+  }
+
+  .lang-toggle{
+    display:flex; border:1.5px solid var(--navy); border-radius: 999px; overflow:hidden;
+    font-size:0.82rem; font-weight:600;
+  }
+  .lang-toggle button{
+    border:none; background: transparent; color: var(--navy);
+    padding: 6px 14px;
+  }
+  .lang-toggle button.active{ background: var(--navy); color: #fff; }
+
+  .btn-login{
+    border: 1.5px solid var(--navy); color: var(--navy); background: transparent;
+    padding: 7px 16px; border-radius: 999px; font-size:0.85rem; font-weight:600;
+  }
+  .btn-login:hover{ background: var(--navy-soft); }
+
+  /* ===== Hero ===== */
+  .hero{
+    background: linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%);
+    color: #fff;
+    padding: 56px 0 72px;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items:center;
+  }
+  .hero-eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.25);
+    padding: 6px 14px; border-radius: 999px; font-size:0.78rem; font-weight:600;
+    color: var(--gold-light); letter-spacing:0.03em; margin-bottom: 20px;
+  }
+  .hero h1{
+    color:#fff; font-size: 2.35rem; font-weight:700; margin-bottom:16px; letter-spacing:-0.01em;
+  }
+  .hero p.lead{
+    font-size: 1.05rem; color: rgba(255,255,255,0.85); max-width: 520px; margin-bottom: 28px;
+  }
+  .hero-ctas{ display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
+  .btn-primary{
+    background: var(--gold); color: var(--navy); font-weight:700;
+    padding: 13px 24px; border-radius: 8px; border:none; font-size:0.95rem;
+  }
+  .btn-primary:hover{ background: var(--gold-light); }
+  .btn-secondary{
+    background: transparent; color:#fff; border:1.5px solid rgba(255,255,255,0.5);
+    padding: 13px 24px; border-radius: 8px; font-size:0.95rem; font-weight:600;
+  }
+  .btn-secondary:hover{ border-color:#fff; }
+
+  /* ===== Play Store badge (custom SVG style) ===== */
+  .play-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    background:#000;
+    color:#fff;
+    padding:8px 16px 8px 14px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.2);
+    transition:transform 0.15s ease, background 0.15s ease;
+    text-decoration:none;
+    font-family:inherit;
+    line-height:1;
+  }
+  .play-badge:hover{ transform:translateY(-2px); background:#1a1a1a; }
+  .play-badge .pb-icon{ width:26px; height:26px; flex-shrink:0; }
+  .play-badge .pb-text{ display:flex; flex-direction:column; gap:1px; }
+  .play-badge .pb-small{ font-size:0.62rem; letter-spacing:0.06em; text-transform:uppercase; opacity:0.85; }
+  .play-badge .pb-large{ font-family:'Roboto Slab', serif; font-size:1rem; font-weight:700; letter-spacing:0.01em; }
+
+  .play-badge.small{
+    padding:6px 13px 6px 11px;
+    border-radius:7px;
+  }
+  .play-badge.small .pb-icon{ width:20px; height:20px; }
+  .play-badge.small .pb-small{ font-size:0.55rem; }
+  .play-badge.small .pb-large{ font-size:0.85rem; }
+
+  /* Hero badge override (on dark bg) */
+  .hero .play-badge{
+    background: rgba(255,255,255,0.12);
+    border:1.5px solid rgba(255,255,255,0.35);
+    backdrop-filter: blur(4px);
+  }
+  .hero .play-badge:hover{ background: rgba(255,255,255,0.2); }
+
+  /* ===== Ticket card ===== */
+  .ticket{
+    background: #fff; color: var(--ink); border-radius: var(--radius);
+    padding: 22px 22px 20px; position:relative; overflow:hidden;
+    box-shadow: 0 24px 50px -18px rgba(0,0,0,0.55);
+    transform: rotate(1.5deg);
+    border: 1px solid var(--line);
+  }
+  .ticket::before{
+    content:""; position:absolute; top:0; bottom:0; left: 78px;
+    border-left: 2px dashed var(--line);
+  }
+  .ticket-stamp{
+    position:absolute; top: 18px; right: -34px; width:150px; text-align:center;
+    background: var(--green); color:#fff; font-weight:700; font-size:0.72rem;
+    letter-spacing:0.08em; padding: 5px 0; transform: rotate(28deg);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  }
+  .ticket-head{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding-bottom:12px; margin-bottom:14px; border-bottom:1px solid var(--line);
+  }
+  .ticket-head .t-title{ font-family: var(--font-head-en); font-weight:700; color:var(--navy); font-size:1rem; }
+  .ticket-head .t-sub{ font-size:0.72rem; color:var(--ink-soft); margin-top:2px; }
+  .ticket-row{ display:flex; font-size:0.85rem; margin-bottom:9px; padding-left:20px; }
+  .ticket-row .k{ width:120px; color: var(--ink-soft); flex-shrink:0; }
+  .ticket-row .v{ font-weight:600; color: var(--ink); }
+  .ticket-foot{
+    margin-top:14px; padding-top:12px; border-top:1px dashed var(--line);
+    display:flex; justify-content:space-between; align-items:center; padding-left:20px;
+  }
+  .ticket-foot small{ color: var(--ink-soft); font-size:0.7rem; }
+
+  /* ===== Trust bar ===== */
+  .trust-bar{
+    background: linear-gradient(135deg, #0d2b4e 0%, #14396b 100%);
+    color: #fff;
+    padding: 26px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .trust-inner{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: center;
+    text-align: center;
+  }
+  .trust-item{
+    position: relative;
+    padding: 6px 12px;
+  }
+  .trust-item + .trust-item::before{
+    content:"";
+    position: absolute;
+    left: 0; top: 20%; bottom: 20%;
+    width: 1px;
+    background: rgba(255,255,255,0.15);
+  }
+  .trust-num{
+    font-family: var(--font-head-en);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    line-height: 1.1;
+    display: block;
+  }
+  .trust-lbl{
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.8);
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* ===== Steps strip ===== */
+  .steps{ background: #fff; border-bottom:1px solid var(--line); }
+  .steps-inner{
+    display:grid; grid-template-columns: repeat(3,1fr); gap: 28px;
+    padding: 34px 0;
+  }
+  .step{ display:flex; gap:14px; align-items:flex-start; }
+  .step-num{
+    flex-shrink:0; width:34px; height:34px; border-radius:50%;
+    background: var(--navy-soft); color: var(--navy); font-weight:700;
+    display:flex; align-items:center; justify-content:center; font-size:0.9rem;
+  }
+  .step h3{ font-size:0.98rem; margin-bottom:3px; }
+  .price-badge{ display:flex; align-items:baseline; gap:8px; margin:6px 0 4px; flex-wrap:wrap; }
+  .price-badge b{ font-family:var(--font-head-en); font-size:1.3rem; color:var(--green); }
+  .price-badge s{ font-size:0.9rem; color:var(--ink-soft); text-decoration:line-through; }
+  .price-badge span{ font-size:0.72rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.02em; }
+  .step p{ font-size:0.85rem; color: var(--ink-soft); }
+
+  /* ===== Section base ===== */
+  .section{ padding: 60px 0; }
+  .section-head{ text-align:center; max-width:640px; margin:0 auto 38px; }
+  .section-head .eyebrow{
+    color: var(--gold); font-weight:700; font-size:0.78rem; letter-spacing:0.08em;
+    text-transform:uppercase; margin-bottom:10px; display:block;
+  }
+  .section-head h2{ font-size:1.7rem; margin-bottom:10px; }
+  .section-head p{ color: var(--ink-soft); font-size:0.95rem; }
+
+  /* ===== App download section ===== */
+  .app-section{
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
+    color: #fff;
+    padding: 60px 0;
+    overflow: hidden;
+  }
+  .app-grid{
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 48px;
+    align-items: center;
+  }
+  .app-visual{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  /* CSS-only phone mockup */
+  .app-phone{
+    width: 220px;
+    height: 440px;
+    background: #000;
+    border-radius: 32px;
+    padding: 10px;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6), 0 0 0 2px rgba(255,255,255,0.08);
+    position: relative;
+  }
+  .app-phone::before{
+    content:"";
+    position: absolute;
+    top: 6px; left: 50%;
+    transform: translateX(-50%);
+    width: 60px; height: 4px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 999px;
+  }
+  .app-phone-screen{
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(160deg, #f6f3ec 0%, #eaf0f6 100%);
+    border-radius: 24px;
+    padding: 24px 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .apn-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .apn-brand{ font-family:var(--font-head-en); font-size:0.8rem; font-weight:700; color:var(--navy); }
+  .apn-brand span{ color:var(--gold); }
+  .apn-dots{ display:flex; gap:3px; }
+  .apn-dots i{ width:5px; height:5px; border-radius:50%; background:#c4c9d1; }
+  .apn-title{ font-family:var(--font-head-en); font-size:0.62rem; font-weight:700; color:var(--navy); margin-bottom:4px; }
+  .apn-card{
+    background: #fff;
+    border-radius: 8px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .apn-line{ height: 6px; border-radius: 3px; background: #eef0f2; }
+  .apn-line.w80{ width: 80%; }
+  .apn-line.w60{ width: 60%; }
+  .apn-line.w40{ width: 40%; }
+  .apn-line.navy{ background: var(--navy-soft); }
+  .apn-line.gold{ background: rgba(201,148,44,0.4); width: 70%; }
+  .apn-pill{ display: inline-block; background: var(--green-soft); color: var(--green); font-size: 0.5rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; align-self: flex-start; }
+
+  .app-content h2{ color:#fff; font-size:1.9rem; margin-bottom:12px; }
+  .app-content p.app-lead{ color:rgba(255,255,255,0.8); font-size:0.98rem; margin-bottom:22px; }
+  .app-features{ list-style:none; margin-bottom:28px; }
+  .app-features li{
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.92rem;
+    color: rgba(255,255,255,0.9);
+    padding: 6px 0;
+  }
+  .app-features li::before{
+    content: "✓";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(31,122,77,0.25);
+    color: #7ce6a8;
+    font-size: 0.78rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .app-cta-row{ display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+
+  /* ===== Categories ===== */
+  .cat-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:18px; }
+  .cat-card{
+    display:block; background:#fff; border:1px solid var(--line); border-radius: var(--radius);
+    padding: 22px; transition: transform 0.15s ease, box-shadow 0.15s ease; cursor:pointer;
+  }
+  .cat-card:hover{ transform: translateY(-3px); box-shadow: 0 14px 30px -18px rgba(13,43,78,0.35); }
+  .cat-icon{
+    width:42px; height:42px; border-radius:9px; background: var(--navy-soft);
+    display:flex; align-items:center; justify-content:center; margin-bottom:14px;
+    font-size:1.2rem;
+  }
+  .cat-card h3{ font-size:1rem; margin-bottom:4px; }
+  .cat-card .cat-posts{ font-size:0.82rem; color: var(--ink-soft); margin-bottom:12px; }
+  .cat-card .cat-free{
+    display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:700;
+    color: var(--green); background: var(--green-soft); padding:4px 10px; border-radius:999px;
+  }
+
+  /* ===== Stats ===== */
+  .stats{ background: var(--navy); color:#fff; }
+  .stats-inner{
+    display:grid; grid-template-columns: repeat(3,1fr); gap:24px; padding: 40px 0; text-align:center;
+  }
+  .stat b{ display:block; font-family: var(--font-head-en); font-size:1.9rem; color: var(--gold-light); }
+  .stat-strike{ font-size:1rem; font-weight:400; color:rgba(255,255,255,0.5); text-decoration:line-through; margin-left:4px; }
+  .stat span{ font-size:0.82rem; color: rgba(255,255,255,0.75); }
+
+  /* ===== Prizes ===== */
+  .prizes-section{
+    background: linear-gradient(180deg, #fff 0%, #faf9f5 100%);
+    padding: 60px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .prizes-grid{
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+    max-width: 900px; margin: 0 auto;
+  }
+  .prize-card{
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; text-align: center;
+  }
+  .prize-card:hover{ transform: translateY(-5px); box-shadow: 0 22px 44px -22px rgba(13,43,78,0.35); }
+  .prize-image{
+    width: 100%; aspect-ratio: 1 / 1;
+    background: linear-gradient(135deg, #f6f3ec 0%, #eaf0f6 100%);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
+  }
+  .prize-image img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+  .prize-image .fallback{
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; color: #a7b7c9; font-size: 0.78rem; text-align: center; padding: 12px;
+  }
+  .prize-image .fallback .fb-icon{ font-size: 3rem; line-height: 1; opacity: 0.55; }
+  .prize-name{
+    padding: 14px 10px 16px; font-family: var(--font-head-en);
+    font-size: 0.98rem; font-weight: 700; color: var(--navy); letter-spacing: -0.01em;
+  }
+
+  /* ===== Footer ===== */
+  .site-footer{ background:var(--navy); padding:0; }
+  .footer-grid{ display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:20px; padding:28px 0 12px; }
+  .footer-col{ display:flex; flex-direction:column; gap:8px; font-size:0.82rem; }
+  .footer-col a{ color:rgba(255,255,255,0.8); }
+  .footer-col a:hover{ color:#fff; }
+  .footer-brand-name{ font-family:var(--font-head-en); font-weight:700; font-size:1.05rem; color:#fff; margin-bottom:4px; }
+  .footer-brand-name span{ color:var(--gold-light); }
+  .footer-powered{ font-size:0.78rem; text-decoration:underline; }
+
+  /* Footer app row */
+  .footer-app-row{
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    padding: 16px 0 24px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: 8px;
+  }
+  .footer-app-label{
+    font-size: 0.8rem; color: rgba(255,255,255,0.65); font-weight: 500;
+  }
+  .footer-app-name{
+    font-family: var(--font-head-en); font-size: 0.92rem; font-weight: 700;
+    color: #fff; margin-left: 2px;
+  }
+
+  #whatsapp-container{ position:fixed; bottom:20px; right:20px; z-index:60; }
+  .wa-float{ display:flex; align-items:center; justify-content:center; width:56px; height:56px; background:#25D366; border-radius:50%; box-shadow:0 6px 16px rgba(0,0,0,0.25); transition:transform 0.15s ease; }
+  .wa-float:hover{ transform:scale(1.08); }
+  @media (max-width:640px){ .footer-grid{ grid-template-columns:1fr; } }
+
+  /* ===== Vacancies ===== */
+  .vac-total{
+    text-align:center; background: var(--navy); color:#fff; border-radius:12px;
+    padding:20px; margin-bottom:28px;
+  }
+  .vac-total b{ display:block; font-family:var(--font-head-en); font-size:2.2rem; color:var(--gold-light); }
+  .vac-total span{ font-size:0.85rem; color:rgba(255,255,255,0.8); }
+
+  .vac-list{ display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
+  .vac-loading{ text-align:center; color:var(--ink-soft); font-size:0.9rem; padding:20px; }
+  .vac-card{
+    display:flex; justify-content:space-between; align-items:center; gap:14px;
+    background:#fff; border:1px solid var(--line); border-radius:10px; padding:16px 18px;
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .vac-card:hover{ transform:translateY(-2px); box-shadow:0 14px 30px -18px rgba(13,43,78,0.35); }
+  .vac-card-main{ flex:1; min-width:0; }
+  .vac-card-post{ font-family:var(--font-head-en); font-weight:700; color:var(--navy); font-size:0.95rem; margin-bottom:4px; }
+  .vac-card-role{ font-size:0.76rem; color:var(--gold); font-weight:700; margin-bottom:4px; }
+  .vac-card-date{ font-size:0.8rem; color:var(--ink-soft); }
+  .vac-card-count{
+    flex-shrink:0; text-align:center; background:var(--green-soft); color:var(--green);
+    border-radius:8px; padding:8px 14px; font-weight:700;
+  }
+  .vac-card-count small{ display:block; font-weight:600; font-size:0.65rem; text-transform:uppercase; margin-top:2px; }
+
+  .vac-disclaimer{ text-align:center; font-size:0.75rem; color:var(--ink-soft); max-width:520px; margin:0 auto; }
+
+  /* ===== Blog strip ===== */
+  .blog-scroll{
+    display:flex; gap:16px; overflow-x:auto; padding:4px 4px 14px; margin-bottom:6px;
+    scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+  }
+  .blog-scroll::-webkit-scrollbar{ height:6px; }
+  .blog-scroll::-webkit-scrollbar-thumb{ background:var(--line); border-radius:999px; }
+  .blog-scroll-card{
+    flex:0 0 auto; width:240px; background:#fff; border:1px solid var(--line); border-radius:10px;
+    overflow:hidden; scroll-snap-align:start; transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .blog-scroll-card:hover{ transform:translateY(-3px); box-shadow:0 14px 28px -18px rgba(13,43,78,0.35); }
+  .blog-scroll-card img{ width:100%; aspect-ratio:16/9; object-fit:cover; background:var(--navy-soft); display:block; }
+  .bsc-body{ padding:12px 14px 14px; }
+  .bsc-tag{ font-size:0.62rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.03em; display:block; margin-bottom:6px; }
+  .bsc-title{ font-family:var(--font-head-en); font-size:0.88rem; color:var(--navy); line-height:1.35; }
+  .blog-view-all{ display:block; text-align:center; font-size:0.85rem; font-weight:700; color:var(--navy); }
+  .blog-view-all:hover{ text-decoration:underline; }
+  .blog-loading{ text-align:center; color:var(--ink-soft); font-size:0.88rem; padding:20px; }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 900px){
+    .prizes-grid{ grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .app-grid{ grid-template-columns: 1fr; gap: 32px; }
+    .app-visual{ order: -1; }
+  }
+
+  @media (max-width: 860px){
+    .hero-grid{ grid-template-columns: 1fr; }
+    .hero{ padding: 40px 0 50px; }
+    .hero h1{ font-size: 1.7rem; }
+    .steps-inner{ grid-template-columns: 1fr; gap:20px; }
+    .cat-grid{ grid-template-columns: 1fr 1fr; }
+    .stats-inner{ grid-template-columns: 1fr; gap: 18px; }
+    .ticket{ transform: none; }
+    .trust-inner{ gap: 8px; }
+    .trust-num{ font-size: 1.6rem; }
+    .trust-item + .trust-item::before{ display:none; }
+    .app-content h2{ font-size: 1.5rem; }
+  }
+  @media (max-width: 520px){
+    .cat-grid{ grid-template-columns: 1fr; }
+    .hero h1{ font-size:1.4rem; }
+
+    .header-inner{ gap:8px; }
+    .brand-row{ gap:6px; min-width:0; }
+    .brand-row img{ height:24px; }
+    .brand{ min-width:0; }
+    .brand-name{ font-size:1.05rem; white-space:nowrap; }
+    .brand-tag{ display:none; }
+    .header-actions{ gap:6px; flex-shrink:0; }
+    .lang-toggle button{ padding:5px 9px; font-size:0.72rem; }
+
+    .prizes-grid{ grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .prize-name{ font-size: 0.85rem; padding: 10px 6px 12px; }
+    .blog-scroll-card{ width:200px; }
+    .vac-card{ flex-direction:column; align-items:flex-start; }
+    .vac-card-count{ align-self:stretch; }
+
+    .app-phone{ width: 190px; height: 380px; }
+    .play-badge .pb-large{ font-size: 0.9rem; }
+  }
+  @media (max-width: 360px){
+    .brand-name{ font-size:0.95rem; }
+  }
+
+  html { scroll-behavior: smooth; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <div class="brand-row">
+      <div class="brand">
+        <div class="brand-name">Namma <span>Exam</span></div>
+        <div class="brand-tag" data-en="Powered by Clinisync Technology" data-kn="Powered by Clinisync Technology">Powered by Clinisync Technology</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="lang-toggle">
+        <button id="btn-en" data-lang="en" class="active" onclick="setLang('en')">EN</button>
+        <button id="btn-kn" data-lang="kn" onclick="setLang('kn')">ಕನ್ನಡ</button>
+      </div>
+      <nav class="nav-links">
+        <a href="https://blog.nammaexam.xyz/" target="_blank" rel="noopener" class="btn-login" data-en="Blog" data-kn="ಬ್ಲಾಗ್">Blog</a>
+        <a href="auth.html?tab=login" class="btn-login" data-en="Login" data-kn="ಲಾಗಿನ್">Login</a>
+      </nav>
+      <button class="menu-toggle" id="menuToggle" onclick="toggleMobileMenu()" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="https://blog.nammaexam.xyz/" target="_blank" rel="noopener"><span class="menu-emoji">📄</span><span data-en="Blog" data-kn="ಬ್ಲಾಗ್">Blog</span></a>
+    <a href="#site-footer" onclick="toggleMobileMenu(false);"><span class="menu-emoji">💬</span><span data-en="Customer Support" data-kn="ಗ್ರಾಹಕ ಬೆಂಬಲ">Customer Support</span></a>
+    <a href="auth.html?tab=login"><span class="menu-emoji">👤</span><span data-en="Login" data-kn="ಲಾಗಿನ್">Login</span></a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="hero-eyebrow" data-en="Trusted by 5000+ Karnataka exam aspirants" data-kn="5000+ ಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಆಕಾಂಕ್ಷಿಗಳಿಂದ ವಿಶ್ವಾಸ">Trusted by 5000+ Karnataka exam aspirants</div>
+      <h1 data-en="Crack VAO, PSI, FDA, SDA — real previous-year papers, completely free to try."
+          data-kn="VAO, PSI, FDA, SDA ಪರೀಕ್ಷೆಗಳನ್ನು ಗೆಲ್ಲಿ — ನೈಜ ಹಿಂದಿನ ವರ್ಷದ ಪ್ರಶ್ನೆಪತ್ರಿಕೆಗಳು, ಸಂಪೂರ್ಣ ಉಚಿತವಾಗಿ ಪ್ರಯತ್ನಿಸಿ.">
+        Crack VAO, PSI, FDA, SDA — real previous-year papers, completely free to try.
+      </h1>
+      <p class="lead" data-en="Don't let the exam format surprise you on the real day. Practice the exact CBT interface here — free, no payment, no card."
+         data-kn="ನಿಜವಾದ ದಿನದಂದು ಪರೀಕ್ಷೆಯ ಸ್ವರೂಪ ನಿಮ್ಮನ್ನು ಆಶ್ಚರ್ಯಗೊಳಿಸದಿರಲಿ. ನಿಖರವಾದ CBT ಇಂಟರ್‌ಫೇಸ್ ಅನ್ನು ಇಲ್ಲಿ ಅಭ್ಯಾಸ ಮಾಡಿ — ಉಚಿತ, ಪಾವತಿ ಬೇಕಿಲ್ಲ, ಕಾರ್ಡ್ ಬೇಕಿಲ್ಲ.">
+        Don't let the exam format surprise you on the real day. Practice the exact CBT interface here — free, no payment, no card.
+      </p>
+      <div class="hero-ctas">
+        <a href="browse.html" class="btn-primary" data-en="Start Free Trial" data-kn="ಉಚಿತ ಪ್ರಯತ್ನ ಪ್ರಾರಂಭಿಸಿ">Start Free Trial</a>
+        <a href="auth.html?tab=register" class="btn-secondary" data-en="Register" data-kn="ನೋಂದಣಿ">Register</a>
+
+        <!-- Play Store badge — compact -->
+        <a class="play-badge" href="https://play.google.com/store/apps/details?id=com.nammaexam.aab&pcampaignid=web_share" target="_blank" rel="noopener" aria-label="Get it on Google Play">
+          <svg class="pb-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="pgA" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#00d9ff"/>
+                <stop offset="1" stop-color="#00a1ff"/>
+              </linearGradient>
+              <linearGradient id="pgB" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#ffd800"/>
+                <stop offset="1" stop-color="#ffa000"/>
+              </linearGradient>
+              <linearGradient id="pgC" x1="0" y1="1" x2="1" y2="0">
+                <stop offset="0" stop-color="#ff3a44"/>
+                <stop offset="1" stop-color="#c31162"/>
+              </linearGradient>
+              <linearGradient id="pgD" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#32e070"/>
+                <stop offset="1" stop-color="#00a045"/>
+              </linearGradient>
+            </defs>
+            <path fill="url(#pgA)" d="M48 32 320 256 48 480z"/>
+            <path fill="url(#pgB)" d="M48 32 400 200 320 256z"/>
+            <path fill="url(#pgC)" d="M320 256 400 312 48 480z"/>
+            <path fill="url(#pgD)" d="M320 256 400 200 448 256 400 312z"/>
+          </svg>
+          <span class="pb-text">
+            <span class="pb-small">Get it on</span>
+            <span class="pb-large">Google Play</span>
+          </span>
+        </a>
+      </div>
+    </div>
+
+    <div class="ticket">
+      <div class="ticket-stamp" data-en="FREE TRIAL" data-kn="ಉಚಿತ ಪ್ರಯತ್ನ">FREE TRIAL</div>
+      <div class="ticket-head">
+        <div>
+          <div class="t-title" data-en="Practice Hall Ticket" data-kn="ಅಭ್ಯಾಸ ಹಾಲ್ ಟಿಕೆಟ್">Practice Hall Ticket</div>
+          <div class="t-sub" data-en="Namma Exam" data-kn="ನಮ್ಮ ಎಕ್ಸಾಮ್">Namma Exam</div>
+        </div>
+      </div>
+      <div class="ticket-row"><span class="k" data-en="Post" data-kn="ಹುದ್ದೆ">Post</span><span class="v">Village Accountant (VAO)</span></div>
+      <div class="ticket-row"><span class="k" data-en="Paper" data-kn="ಪ್ರಶ್ನೆಪತ್ರಿಕೆ">Paper</span><span class="v" data-en="2024 — Previous Year" data-kn="2024 — ಹಿಂದಿನ ವರ್ಷ">2024 — Previous Year</span></div>
+      <div class="ticket-row"><span class="k" data-en="Questions" data-kn="ಪ್ರಶ್ನೆಗಳು">Questions</span><span class="v">100</span></div>
+      <div class="ticket-row"><span class="k" data-en="Attempts" data-kn="ಪ್ರಯತ್ನಗಳು">Attempts</span><span class="v" data-en="Unlimited" data-kn="ಅಪರಿಮಿತ">Unlimited</span></div>
+      <div class="ticket-foot">
+        <small data-en="Valid for every registered candidate" data-kn="ಪ್ರತಿ ನೋಂದಾಯಿತ ಅಭ್ಯರ್ಥಿಗೆ ಮಾನ್ಯ">Valid for every registered candidate</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<section class="trust-bar">
+  <div class="wrap trust-inner">
+    <div class="trust-item">
+      <span class="trust-num" data-counter="5000" data-suffix="+">5000+</span>
+      <span class="trust-lbl" data-en="Students Practicing" data-kn="ಅಭ್ಯಾಸ ಮಾಡುತ್ತಿರುವ ವಿದ್ಯಾರ್ಥಿಗಳು">Students Practicing</span>
+    </div>
+    <div class="trust-item">
+      <span class="trust-num" data-counter="100" data-suffix="+">100+</span>
+      <span class="trust-lbl" data-en="Practice Papers" data-kn="ಅಭ್ಯಾಸ ಪ್ರಶ್ನೆಪತ್ರಿಕೆಗಳು">Practice Papers</span>
+    </div>
+    <div class="trust-item">
+      <span class="trust-num">₹49</span>
+      <span class="trust-lbl" data-en="One Year · Every Paper" data-kn="ಒಂದು ವರ್ಷ · ಎಲ್ಲಾ ಪ್ರಶ್ನೆಪತ್ರಿಕೆಗಳು">One Year · Every Paper</span>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS -->
+<section class="steps">
+  <div class="wrap steps-inner">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>
+        <h3 data-en="Pick your post" data-kn="ನಿಮ್ಮ ಹುದ್ದೆ ಆಯ್ಕೆಮಾಡಿ">Pick your post</h3>
+        <p data-en="VAO, PSI, FDA, SDA, Forest Guard and more — organised by department." data-kn="VAO, PSI, FDA, SDA, ಅರಣ್ಯ ಸಿಬ್ಬಂದಿ ಮತ್ತು ಇನ್ನಷ್ಟು — ಇಲಾಖೆಯ ಪ್ರಕಾರ ಜೋಡಿಸಲಾಗಿದೆ.">VAO, PSI, FDA, SDA, Forest Guard and more — organised by department.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>
+        <h3 data-en="Attempt the latest paper, free" data-kn="ಇತ್ತೀಚಿನ ಪ್ರಶ್ನೆಪತ್ರಿಕೆಯನ್ನು ಉಚಿತವಾಗಿ ಪ್ರಯತ್ನಿಸಿ">Attempt the latest paper, free</h3>
+        <p data-en="Unlimited attempts, no card, no catch. Pause and resume anytime." data-kn="ಅಪರಿಮಿತ ಪ್ರಯತ್ನಗಳು, ಕಾರ್ಡ್ ಇಲ್ಲ. ಯಾವಾಗ ಬೇಕಾದರೂ ವಿರಾಮ ಮತ್ತು ಮುಂದುವರಿಸಿ.">Unlimited attempts, no card, no catch. Pause and resume anytime.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>
+        <h3 data-en="Liked it? Unlock every post" data-kn="ಇಷ್ಟವಾಯಿತೆ? ಎಲ್ಲಾ ಹುದ್ದೆಗಳನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಿ">Liked it? Unlock every post</h3>
+        <div class="price-badge">
+          <b>₹49</b><s>₹99</s>
+          <span data-en="Launch price — goes up soon" data-kn="ಲಾಂಚ್ ಬೆಲೆ — ಶೀಘ್ರದಲ್ಲೇ ಹೆಚ್ಚಾಗುತ್ತದೆ">Launch price — goes up soon</span>
+        </div>
+        <p data-en="One subscription, one year, every department's papers — not just one." data-kn="ಒಂದು ಚಂದಾದಾರಿಕೆ, ಒಂದು ವರ್ಷ, ಎಲ್ಲಾ ಇಲಾಖೆಗಳ ಪ್ರಶ್ನೆಪತ್ರಿಕೆಗಳು.">One subscription, one year, every department's papers — not just one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRIZES -->
+<section class="prizes-section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow" data-en="Gift Giveaway" data-kn="ಉಡುಗೊರೆ ವಿತರಣೆ">Gift Giveaway</span>
+      <h2 data-en="Exciting Prizes For Lucky Winners" data-kn="ಅದೃಷ್ಟವಂತ ವಿಜೇತರಿಗೆ ಆಕರ್ಷಕ ಬಹುಮಾನಗಳು">Exciting Prizes For Lucky Winners</h2>
+      <p data-en="Lucky subscribers win these exciting gifts — as a thank you for choosing Namma Exam."
+         data-kn="ಅದೃಷ್ಟವಂತ ಚಂದಾದಾರರು ಈ ಆಕರ್ಷಕ ಉಡುಗೊರೆಗಳನ್ನು ಗೆಲ್ಲುತ್ತಾರೆ.">
+        Lucky subscribers win these exciting gifts — as a thank you for choosing Namma Exam.
+      </p>
+    </div>
+
+    <div class="prizes-grid">
+      <div class="prize-card">
+        <div class="prize-image">
+          <img src="images/nammawinner1.png" alt="Jacket"
+               onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;fallback&quot;><span class=&quot;fb-icon&quot;>🧥</span><span>Jacket</span></div>';">
+        </div>
+        <div class="prize-name" data-en="Jacket" data-kn="ಜಾಕೆಟ್">Jacket</div>
+      </div>
+      <div class="prize-card">
+        <div class="prize-image">
+          <img src="images/nammawinner2.png" alt="T-Shirt"
+               onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;fallback&quot;><span class=&quot;fb-icon&quot;>👕</span><span>T-Shirt</span></div>';">
+        </div>
+        <div class="prize-name" data-en="T-Shirt" data-kn="ಟಿ-ಶರ್ಟ್">T-Shirt</div>
+      </div>
+      <div class="prize-card">
+        <div class="prize-image">
+          <img src="images/nammawinner3.png" alt="Bag"
+               onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;fallback&quot;><span class=&quot;fb-icon&quot;>🎒</span><span>Bag</span></div>';">
+        </div>
+        <div class="prize-name" data-en="Bag" data-kn="ಬ್ಯಾಗ್">Bag</div>
+      </div>
+      <div class="prize-card">
+        <div class="prize-image">
+          <img src="images/nammawinner4.png" alt="Bottle"
+               onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;fallback&quot;><span class=&quot;fb-icon&quot;>🥤</span><span>Bottle</span></div>';">
+        </div>
+        <div class="prize-name" data-en="Bottle" data-kn="ಬಾಟಲ್">Bottle</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APP DOWNLOAD SECTION (NEW) -->
+<section class="app-section">
+  <div class="wrap app-grid">
+    <div class="app-visual">
+      <div class="app-phone">
+        <div class="app-phone-screen">
+          <div class="apn-top">
+            <div class="apn-brand">Namma <span>Exam</span></div>
+            <div class="apn-dots"><i></i><i></i><i></i></div>
+          </div>
+          <div class="apn-title">Choose a Department</div>
+          <div class="apn-card">
+            <div class="apn-line navy w80"></div>
+            <div class="apn-line w60"></div>
+            <span class="apn-pill">Free</span>
+          </div>
+          <div class="apn-card">
+            <div class="apn-line navy w60"></div>
+            <div class="apn-line w40"></div>
+            <span class="apn-pill">Free</span>
+          </div>
+          <div class="apn-card">
+            <div class="apn-line gold"></div>
+            <div class="apn-line w80"></div>
+            <div class="apn-line w60"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="app-content">
+      <div class="hero-eyebrow" style="margin-bottom:16px; background:rgba(255,255,255,0.1); color:var(--gold-light); border-color:rgba(255,255,255,0.25);">
+        <span data-en="📱 Now Available on Google Play" data-kn="📱 ಈಗ Google Play ನಲ್ಲಿ ಲಭ್ಯವಿದೆ">📱 Now Available on Google Play</span>
+      </div>
+      <h2 data-en="Take NammaExam Everywhere" data-kn="ನಮ್ಮ ಎಕ್ಸಾಮ್ ಅನ್ನು ಎಲ್ಲೆಡೆ ಒಯ್ಯಿರಿ">Take NammaExam Everywhere</h2>
+      <p class="app-lead" data-en="NammaExam Kannada is now available for Android. Practice anytime, anywhere — even offline."
+         data-kn="ನಮ್ಮ ಎಕ್ಸಾಮ್ ಕನ್ನಡ ಈಗ Android ಗಾಗಿ ಲಭ್ಯವಿದೆ.">
+        NammaExam Kannada is now available for Android. Practice anytime, anywhere — even offline.
+      </p>
+      <ul class="app-features">
+        <li data-en="Practice on the go — no laptop needed" data-kn="ಪ್ರಯಾಣದಲ್ಲೂ ಅಭ್ಯಾಸ">Practice on the go — no laptop needed</li>
+        <li data-en="Same login as the website" data-kn="ವೆಬ್‌ಸೈಟ್‌ನಂತೆಯೇ ಲಾಗಿನ್">Same login as the website</li>
+        <li data-en="Instant push notifications for new papers" data-kn="ಹೊಸ ಪ್ರಶ್ನೆಪತ್ರಿಕೆಗಳಿಗೆ ತಕ್ಷಣ ಅಧಿಸೂಚನೆಗಳು">Instant push notifications for new papers</li>
+        <li data-en="Full Kannada + English support" data-kn="ಪೂರ್ಣ ಕನ್ನಡ + ಇಂಗ್ಲಿಷ್ ಬೆಂಬಲ">Full Kannada + English support</li>
+        <li data-en="100% free to download" data-kn="ಡೌನ್‌ಲೋಡ್ 100% ಉಚಿತ">100% free to download</li>
+      </ul>
+      <div class="app-cta-row">
+        <a class="play-badge" href="https://play.google.com/store/apps/details?id=com.nammaexam.aab&pcampaignid=web_share" target="_blank" rel="noopener" aria-label="Get it on Google Play">
+          <svg class="pb-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="pgA2" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#00d9ff"/>
+                <stop offset="1" stop-color="#00a1ff"/>
+              </linearGradient>
+              <linearGradient id="pgB2" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#ffd800"/>
+                <stop offset="1" stop-color="#ffa000"/>
+              </linearGradient>
+              <linearGradient id="pgC2" x1="0" y1="1" x2="1" y2="0">
+                <stop offset="0" stop-color="#ff3a44"/>
+                <stop offset="1" stop-color="#c31162"/>
+              </linearGradient>
+              <linearGradient id="pgD2" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#32e070"/>
+                <stop offset="1" stop-color="#00a045"/>
+              </linearGradient>
+            </defs>
+            <path fill="url(#pgA2)" d="M48 32 320 256 48 480z"/>
+            <path fill="url(#pgB2)" d="M48 32 400 200 320 256z"/>
+            <path fill="url(#pgC2)" d="M320 256 400 312 48 480z"/>
+            <path fill="url(#pgD2)" d="M320 256 400 200 448 256 400 312z"/>
+          </svg>
+          <span class="pb-text">
+            <span class="pb-small">Get it on</span>
+            <span class="pb-large">Google Play</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPARTMENTS -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow" data-en="Departments" data-kn="ಇಲಾಖೆಗಳು">Departments</span>
+      <h2 data-en="Every major Karnataka recruiting body, in one place" data-kn="ಎಲ್ಲಾ ಪ್ರಮುಖ ಕರ್ನಾಟಕ ನೇಮಕಾತಿ ಸಂಸ್ಥೆಗಳು, ಒಂದೇ ಸ್ಥಳದಲ್ಲಿ">Every major Karnataka recruiting body, in one place</h2>
+      <p data-en="Each post includes 5 previous-year papers — the most recent one always free." data-kn="ಪ್ರತಿ ಹುದ್ದೆಗೆ 5 ಹಿಂದಿನ ವರ್ಷದ ಪ್ರಶ್ನೆಪತ್ರಿಕೆಗಳಿವೆ — ಇತ್ತೀಚಿನದು ಯಾವಾಗಲೂ ಉಚಿತ.">Each post includes 5 previous-year papers — the most recent one always free.</p>
+    </div>
+
+    <div class="cat-grid">
+      <a href="browse.html" class="cat-card">
+        <div class="cat-icon">🏛️</div>
+        <h3 data-en="Revenue Department" data-kn="ರಾಜಸ್ವ ಇಲಾಖೆ">Revenue Department</h3>
+        <div class="cat-posts" data-en="VAO, Land Surveyor" data-kn="ಗ್ರಾಮ ಲೆಕ್ಕಿಗ, ಭೂ ಸರ್ವೇಯರ್">VAO, Land Surveyor</div>
+        <span class="cat-free" data-en="● Free paper available" data-kn="● ಉಚಿತ ಪ್ರಶ್ನೆಪತ್ರಿಕೆ ಲಭ್ಯ">● Free paper available</span>
+      </a>
+      <a href="browse.html" class="cat-card">
+        <div class="cat-icon">👮</div>
+        <h3 data-en="Police Department" data-kn="ಪೊಲೀಸ್ ಇಲಾಖೆ">Police Department</h3>
+        <div class="cat-posts" data-en="Police Constable, PSI" data-kn="ಪೊಲೀಸ್ ಕಾನ್‌ಸ್ಟೇಬಲ್, ಪಿಎಸ್‌ಐ">Police Constable, PSI</div>
+        <span class="cat-free" data-en="● Free paper available" data-kn="● ಉಚಿತ ಪ್ರಶ್ನೆಪತ್ರಿಕೆ ಲಭ್ಯ">● Free paper available</span>
+      </a>
+      <a href="browse.html" class="cat-card">
+        <div class="cat-icon">📋</div>
+        <h3 data-en="KAS / Administrative" data-kn="ಕೆಎಎಸ್ / ಆಡಳಿತ">KAS / Administrative</h3>
+        <div class="cat-posts" data-en="KAS Prelims, KAS Mains" data-kn="ಕೆಎಎಸ್ ಪೂರ್ವಭಾವಿ, ಕೆಎಎಸ್ ಮುಖ್ಯ">KAS Prelims, KAS Mains</div>
+        <span class="cat-free" data-en="● Free paper available" data-kn="● ಉಚಿತ ಪ್ರಶ್ನೆಪತ್ರಿಕೆ ಲಭ್ಯ">● Free paper available</span>
+      </a>
+      <a href="browse.html" class="cat-card">
+        <div class="cat-icon">🌲</div>
+        <h3 data-en="Forest Department" data-kn="ಅರಣ್ಯ ಇಲಾಖೆ">Forest Department</h3>
+        <div class="cat-posts" data-en="Forest Guard, RFO" data-kn="ಅರಣ್ಯ ಸಿಬ್ಬಂದಿ, ಆರ್‌ಎಫ್‌ಒ">Forest Guard, RFO</div>
+        <span class="cat-free" data-en="● Free paper available" data-kn="● ಉಚಿತ ಪ್ರಶ್ನೆಪತ್ರಿಕೆ ಲಭ್ಯ">● Free paper available</span>
+      </a>
+      <a href="browse.html" class="cat-card">
+        <div class="cat-icon">🎓</div>
+        <h3 data-en="KREIS" data-kn="ಕೆಆರ್‌ಇಐಎಸ್">KREIS</h3>
+        <div class="cat-posts" data-en="Residential school posts" data-kn="ವಸತಿ ಶಾಲಾ ಹುದ್ದೆಗಳು">Residential school posts</div>
+        <span class="cat-free" data-en="● Free paper available" data-kn="● ಉಚಿತ ಪ್ರಶ್ನೆಪತ್ರಿಕೆ ಲಭ್ಯ">● Free paper available</span>
+      </a>
+      <a href="browse.html" class="cat-card">
+        <div class="cat-icon">🗂️</div>
+        <h3 data-en="Clerical / Assistant Posts" data-kn="ಕಚೇರಿ ಸಹಾಯಕ ಹುದ್ದೆಗಳು">Clerical / Assistant Posts</h3>
+        <div class="cat-posts" data-en="FDA, SDA" data-kn="ಎಫ್‌ಡಿಎ, ಎಸ್‌ಡಿಎ">FDA, SDA</div>
+        <span class="cat-free" data-en="● Free paper available" data-kn="● ಉಚಿತ ಪ್ರಶ್ನೆಪತ್ರಿಕೆ ಲಭ್ಯ">● Free paper available</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="wrap stats-inner">
+    <div class="stat"><b>6</b><span data-en="Departments covered" data-kn="ಒಳಗೊಂಡ ಇಲಾಖೆಗಳು">Departments covered</span></div>
+    <div class="stat"><b>5</b><span data-en="Previous papers per post" data-kn="ಪ್ರತಿ ಹುದ್ದೆಗೆ ಹಿಂದಿನ ಪ್ರಶ್ನೆಪತ್ರಿಕೆಗಳು">Previous papers per post</span></div>
+    <div class="stat"><b>₹49 <s class="stat-strike">₹99</s></b><span data-en="Launch price · every post · 1 year" data-kn="ಲಾಂಚ್ ಬೆಲೆ · ಎಲ್ಲಾ ಹುದ್ದೆಗಳು · 1 ವರ್ಷ">Launch price · every post · 1 year</span></div>
+  </div>
+</section>
+
+<!-- VACANCIES -->
+<section class="section" id="vacancies-section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow" data-en="Live Openings" data-kn="ಪ್ರಸ್ತುತ ಹುದ್ದೆಗಳು">Live Openings</span>
+      <h2 data-en="Government job openings in Karnataka right now" data-kn="ಈಗ ಕರ್ನಾಟಕದಲ್ಲಿ ಸರ್ಕಾರಿ ಉದ್ಯೋಗ ಹುದ್ದೆಗಳು">Government job openings in Karnataka right now</h2>
+      <p data-en="Tap any post to start practicing for it." data-kn="ಅಭ್ಯಾಸ ಪ್ರಾರಂಭಿಸಲು ಯಾವುದೇ ಹುದ್ದೆಯನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ.">Tap any post to start practicing for it.</p>
+    </div>
+
+    <div class="vac-total" id="vac-total" style="display:none;">
+      <b id="vac-total-num">—</b>
+      <span data-en="Total Openings Across Karnataka" data-kn="ಕರ್ನಾಟಕದಾದ್ಯಂತ ಒಟ್ಟು ಹುದ್ದೆಗಳು">Total Openings Across Karnataka</span>
+    </div>
+
+    <div id="vac-list" class="vac-list">
+      <div class="vac-loading" data-en="Loading current openings..." data-kn="ಪ್ರಸ್ತುತ ಹುದ್ದೆಗಳು ಲೋಡ್ ಆಗುತ್ತಿದೆ...">Loading current openings...</div>
+    </div>
+
+    <p class="vac-disclaimer" data-en="As per publicly available notifications — please verify dates and vacancy counts on the official KPSC/KEA site before applying." data-kn="ಸಾರ್ವಜನಿಕವಾಗಿ ಲಭ್ಯವಿರುವ ಅಧಿಸೂಚನೆಗಳ ಪ್ರಕಾರ — ಅರ್ಜಿ ಸಲ್ಲಿಸುವ ಮೊದಲು ದಯವಿಟ್ಟು ಅಧಿಕೃತ KPSC/KEA ಸೈಟ್‌ನಲ್ಲಿ ದಿನಾಂಕ ಮತ್ತು ಹುದ್ದೆಗಳ ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ.">As per publicly available notifications — please verify dates and vacancy counts on the official KPSC/KEA site before applying.</p>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section class="section blog-strip-section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow" data-en="From the Blog" data-kn="ಬ್ಲಾಗ್‌ನಿಂದ">From the Blog</span>
+      <h2 data-en="Latest tips and guides" data-kn="ಇತ್ತೀಚಿನ ಸಲಹೆಗಳು ಮತ್ತು ಮಾರ್ಗದರ್ಶಿಗಳು">Latest tips and guides</h2>
+      <p data-en="Fresh posts from our blog, updated regularly." data-kn="ನಮ್ಮ ಬ್ಲಾಗ್‌ನಿಂದ ಹೊಸ ಪೋಸ್ಟ್‌ಗಳು, ನಿಯಮಿತವಾಗಿ ಅಪ್‌ಡೇಟ್ ಆಗುತ್ತವೆ.">Fresh posts from our blog, updated regularly.</p>
+    </div>
+
+    <div class="blog-scroll" id="blog-scroll">
+      <div class="blog-loading">Loading latest posts…</div>
+    </div>
+
+    <a href="https://blog.nammaexam.xyz/" target="_blank" rel="noopener" class="blog-view-all" data-en="View all posts →" data-kn="ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳನ್ನು ವೀಕ್ಷಿಸಿ →">View all posts →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer" id="site-footer">
+  <div class="wrap">
+    <div id="site-footer-inner"></div>
+  </div>
+</footer>
+
+<div id="whatsapp-container"></div>
+
+<script src="assets/app.js"></script>
+<script src="shared.js"></script>
+<script>
+const HARDCODED_VACANCIES = [
+  { postName: 'Civil Police Constable (Civil PC)', expectedExamDate: 'August 2, 2026', totalVacancies: 1600 },
+  { postName: 'CAR/DAR Police Constable', expectedExamDate: 'September 6, 2026', totalVacancies: 3060 },
+  { postName: 'KSRP Police Constable', expectedExamDate: 'September 6, 2026', totalVacancies: 1000 },
+  { postName: 'IRB Police Constable', expectedExamDate: 'September 6, 2026', totalVacancies: 400 },
+  { postName: 'KSISF Police Constable', expectedExamDate: 'September 6, 2026', totalVacancies: 500 },
+  { postName: 'Village Administrative Officer (VAO)', expectedExamDate: 'October 4, 2026 (RPC) / October 25, 2026 (KK)', totalVacancies: 572 },
+  { postName: 'Land Surveyor', expectedExamDate: 'March 1-9, 2025', totalVacancies: 2000 },
+  { postName: 'KRIES Teacher', expectedExamDate: 'To Be Announced', totalVacancies: 1087 },
+  { postName: 'Graduate Primary School Teacher (GPSTR)', role: 'Classes 6–8', expectedExamDate: 'To Be Announced', totalVacancies: 15000 }
+];
+
+function setLanguage(lang){
+  document.querySelectorAll('[data-en]').forEach(function(el){
+    el.textContent = el.dataset[lang];
+  });
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-kn').classList.toggle('active', lang === 'kn');
+  document.body.classList.toggle('lang-kn', lang === 'kn');
+  document.getElementById('htmlRoot').setAttribute('lang', lang);
+}
+
+function toggleMobileMenu(forceState){
+  const menu = document.getElementById('mobileMenu');
+  const btn = document.getElementById('menuToggle');
+  const open = typeof forceState === 'boolean' ? forceState : !menu.classList.contains('open');
+  menu.classList.toggle('open', open);
+  btn.classList.toggle('open', open);
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+document.addEventListener('click', function(e){
+  const menu = document.getElementById('mobileMenu');
+  const btn = document.getElementById('menuToggle');
+  if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) {
+    toggleMobileMenu(false);
+  }
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') toggleMobileMenu(false);
+});
+window.addEventListener('resize', function(){
+  if (window.innerWidth > 600) toggleMobileMenu(false);
+});
+
+loadVacancies();
+loadBlogFeed();
+applyLang();
+startPromo();
+if (typeof renderFooter === 'function') renderFooter('site-footer-inner');
+if (typeof renderWhatsAppButton === 'function') renderWhatsAppButton('whatsapp-container', 'home');
+
+async function loadVacancies(){
+  const total = HARDCODED_VACANCIES.reduce((sum, v) => sum + v.totalVacancies, 0);
+  renderVacancies({ vacancies: HARDCODED_VACANCIES, totalVacancies: total });
+}
+
+function renderVacancies(data){
+  if (!data.vacancies || data.vacancies.length === 0) {
+    document.getElementById('vac-list').innerHTML = '<div class="vac-loading">No openings listed yet — check back soon.</div>';
+    return;
+  }
+  document.getElementById('vac-total').style.display = 'block';
+  document.getElementById('vac-total-num').textContent = data.totalVacancies.toLocaleString('en-IN') + '+';
+
+  document.getElementById('vac-list').innerHTML = data.vacancies.map(function(v){
+    return '<a class="vac-card" href="browse.html">' +
+      '<div class="vac-card-main">' +
+        '<div class="vac-card-post">' + v.postName + '</div>' +
+        (v.role ? '<div class="vac-card-role">' + v.role + '</div>' : '') +
+        '<div class="vac-card-date">' + v.expectedExamDate + '</div>' +
+      '</div>' +
+      '<div class="vac-card-count">' + Number(v.totalVacancies).toLocaleString('en-IN') + '<small>Vacancies</small></div>' +
+    '</a>';
+  }).join('');
+}
+
+// ====== BLOG: JSONP loader (bypasses CORS) ======
+window.handleBlogFeed = function(json){
+  const box = document.getElementById('blog-scroll');
+  if (!box) return;
+  try {
+    const entries = (json.feed && json.feed.entry) || [];
+    if (entries.length === 0) {
+      box.innerHTML = '<div class="blog-loading">No posts yet. <a href="https://blog.nammaexam.xyz/" target="_blank" rel="noopener" style="color:var(--navy); text-decoration:underline;">Visit our blog →</a></div>';
+      return;
+    }
+
+    box.innerHTML = entries.map(function(entry){
+      const title = (entry.title && entry.title.$t) || 'Untitled';
+      let postUrl = 'https://blog.nammaexam.xyz/';
+      if (entry.link && entry.link.length) {
+        const alt = entry.link.find(l => l.rel === 'alternate');
+        if (alt && alt.href) postUrl = alt.href;
+      }
+      let thumb = '';
+      if (entry.media$thumbnail && entry.media$thumbnail.url) {
+        thumb = entry.media$thumbnail.url.replace(/\/s72-c\//, '/s400-c/');
+      }
+      let tag = 'Blog';
+      if (entry.category && entry.category.length) {
+        tag = entry.category[0].term;
+      }
+
+      const imgHtml = thumb
+        ? '<img src="' + thumb + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">'
+        : '<div style="width:100%;aspect-ratio:16/9;background:var(--navy-soft);display:flex;align-items:center;justify-content:center;font-size:2rem;color:#a7b7c9;">📄</div>';
+
+      return '<a class="blog-scroll-card" href="' + postUrl + '" target="_blank" rel="noopener">' +
+        imgHtml +
+        '<div class="bsc-body"><span class="bsc-tag">' + tag + '</span><div class="bsc-title">' + title + '</div></div>' +
+      '</a>';
+    }).join('');
+  } catch(err) {
+    console.error('Blog parse error:', err);
+  }
+};
+
+function loadBlogFeed(){
+  const script = document.createElement('script');
+  script.src = 'https://www.blogger.com/feeds/569239504353380212/posts/default?alt=json-in-script&max-results=6&callback=handleBlogFeed';
+  script.onerror = function(){
+    const box = document.getElementById('blog-scroll');
+    if (box) box.innerHTML = '<div class="blog-loading">Could not load blog. <a href="https://blog.nammaexam.xyz/" target="_blank" rel="noopener" style="color:var(--navy); text-decoration:underline;">Visit our blog →</a></div>';
+  };
+  document.body.appendChild(script);
+}
+
+// ====== Animated counters ======
+function animateCounters(){
+  document.querySelectorAll('[data-counter]').forEach(function(el){
+    if (el.dataset.done === '1') return;
+    const target = parseInt(el.dataset.counter, 10);
+    const suffix = el.dataset.suffix || '';
+    const duration = 1400;
+    const start = performance.now();
+    function step(now){
+      const progress = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = Math.floor(target * eased);
+      el.textContent = value.toLocaleString('en-IN') + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+      else { el.textContent = target.toLocaleString('en-IN') + suffix; el.dataset.done = '1'; }
+    }
+    requestAnimationFrame(step);
+  });
+}
+(function(){
+  const trustBar = document.querySelector('.trust-bar');
+  if (!trustBar) return;
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) { animateCounters(); obs.disconnect(); }
+      });
+    }, { threshold: 0.3 });
+    obs.observe(trustBar);
+  } else {
+    animateCounters();
+  }
+})();
+</script>
+<script>
+// Prefetch browse.html on hover + page load
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('a[href*="browse.html"]').forEach(function(btn){
+    btn.addEventListener('mouseenter', function(){
+      fetch('browse.html', { method: 'GET', credentials: 'same-origin' }).catch(function(){});
+    });
+  });
+});
+
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    fetch('browse.html', { method: 'GET', credentials: 'same-origin' }).catch(function(){});
+  }, 1500);
+});
+
+</script>
+</body>
+</html>

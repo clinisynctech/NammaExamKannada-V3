@@ -1,0 +1,23 @@
+{
+  "name": "Namma Exam — Karnataka Govt Exam Practice",
+  "short_name": "Namma Exam",
+  "description": "Practice Karnataka government job exams — VAO, PSI, FDA, SDA, Police Constable and more.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f6f3ec",
+  "theme_color": "#0d2b4e",
+  "lang": "en",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Browse papers", "url": "/browse.html" },
+    { "name": "My study",      "url": "/dashboard.html" },
+    { "name": "My progress",   "url": "/progress.html" }
+  ]
+}

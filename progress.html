@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My Progress — Namma Exam</title>
+<meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d2b4e">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&family=Inter:wght@400;500;600;700&family=Noto+Serif+Kannada:wght@600;700&family=Noto+Sans+Kannada:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .metrics{ display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:12px; }
+  .metric{ background:var(--navy-soft); border-radius:var(--radius); padding:14px; text-align:center; }
+  .metric b{ display:block; font-family:var(--font-head); font-size:1.7rem; color:var(--navy); }
+  .metric span{ font-size:0.7rem; color:var(--ink-soft); }
+
+  .row{ display:flex; align-items:center; gap:9px; margin-bottom:8px; }
+  .row .k{ width:112px; flex:0 0 112px; font-size:0.8rem; line-height:1.3; }
+  .row .v{ width:46px; flex:0 0 46px; text-align:right; font-size:0.74rem; color:var(--ink-soft); }
+  .bar{ flex:1; height:8px; background:var(--navy-soft); border-radius:999px; overflow:hidden; }
+  .bar span{ display:block; height:100%; border-radius:999px; }
+
+  .chip-focus{
+    display:inline-flex; align-items:center; gap:5px;
+    background:var(--red-soft); color:var(--red);
+    font-size:0.76rem; padding:5px 11px; border-radius:999px; margin:0 5px 6px 0;
+  }
+  .big-num{ font-family:var(--font-head); font-size:1.6rem; color:var(--navy); font-weight:700; }
+
+  .empty{ text-align:center; padding:40px 20px; }
+  .empty h2{ margin-bottom:8px; }
+</style>
+</head>
+<body>
+
+<header id="app-header"></header>
+
+<main class="wrap" style="padding-top:16px; padding-bottom:24px;">
+  <div id="loading"></div>
+  <div class="msg" id="err"></div>
+
+  <!-- nothing attempted yet -->
+  <div id="empty" class="hidden">
+    <div class="card empty">
+      <h2 data-en="No attempts yet" data-kn="ಇನ್ನೂ ಪ್ರಯತ್ನಗಳಿಲ್ಲ">No attempts yet</h2>
+      <p class="muted" style="margin-bottom:14px"
+         data-en="Take one paper and this page fills up with your strengths and weak topics."
+         data-kn="ಒಂದು ಪತ್ರಿಕೆ ಬರೆಯಿರಿ, ಈ ಪುಟ ತುಂಬುತ್ತದೆ.">Take one paper and this page fills up with your strengths and weak topics.</p>
+      <a class="btn btn-primary" href="browse.html" data-en="Find a paper" data-kn="ಪತ್ರಿಕೆ ಹುಡುಕಿ">Find a paper</a>
+    </div>
+  </div>
+
+  <div id="content" class="hidden">
+
+    <div class="metrics">
+      <div class="metric"><b id="m-ready">0%</b><span data-en="readiness" data-kn="ಸಿದ್ಧತೆ">readiness</span></div>
+      <div class="metric"><b id="m-pct">—</b><span data-en="percentile" data-kn="ಶೇಕಡಾವಾರು">percentile</span></div>
+    </div>
+
+    <!-- trend -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title" data-en="Score trend" data-kn="ಅಂಕಗಳ ಪ್ರವೃತ್ತಿ">Score trend</span>
+        <span class="muted" id="t-improve"></span>
+      </div>
+      <div id="chart"></div>
+      <div class="muted" id="t-summary" style="margin-top:8px"></div>
+    </div>
+
+    <!-- strengths -->
+    <div class="card hidden" id="subj-card" style="margin-top:10px">
+      <div class="card-title" style="margin-bottom:11px"
+           data-en="Strength by subject" data-kn="ವಿಷಯವಾರು ಸಾಮರ್ಥ್ಯ">Strength by subject</div>
+      <div id="subjects"></div>
+    </div>
+
+    <!-- focus topics -->
+    <div class="card hidden" id="focus-card" style="margin-top:10px">
+      <div class="card-title" style="margin-bottom:9px"
+           data-en="Focus on these topics" data-kn="ಈ ವಿಷಯಗಳ ಮೇಲೆ ಗಮನ">Focus on these topics</div>
+      <div id="focus"></div>
+      <p class="muted" style="margin-top:7px; font-size:0.78rem"
+         data-en="Lowest accuracy, based on everything you have attempted."
+         data-kn="ನೀವು ಪ್ರಯತ್ನಿಸಿದ ಎಲ್ಲದರ ಆಧಾರದ ಮೇಲೆ.">Lowest accuracy, based on everything you have attempted.</p>
+    </div>
+
+    <!-- time -->
+    <div class="card hidden" id="time-card" style="margin-top:10px">
+      <div class="card-title" style="margin-bottom:9px"
+           data-en="Time management" data-kn="ಸಮಯ ನಿರ್ವಹಣೆ">Time management</div>
+      <div style="display:flex; align-items:baseline; gap:8px">
+        <span class="big-num" id="t-avg"></span>
+        <span class="muted" data-en="average per question" data-kn="ಪ್ರತಿ ಪ್ರಶ್ನೆಗೆ ಸರಾಸರಿ">average per question</span>
+      </div>
+      <div class="muted" id="t-insight" style="margin-top:6px"></div>
+    </div>
+
+    <!-- difficulty -->
+    <div class="card hidden" id="diff-card" style="margin-top:10px">
+      <div class="card-title" style="margin-bottom:11px"
+           data-en="By difficulty" data-kn="ಕಷ್ಟದ ಪ್ರಕಾರ">By difficulty</div>
+      <div id="diff"></div>
+    </div>
+
+    <!-- consistency -->
+    <div class="card" style="margin-top:10px">
+      <div class="card-title" style="margin-bottom:9px"
+           data-en="Consistency" data-kn="ಸ್ಥಿರತೆ">Consistency</div>
+      <div style="display:flex; gap:18px; flex-wrap:wrap">
+        <div><span class="big-num" id="c-streak">0</span>
+             <div class="muted" data-en="day streak" data-kn="ದಿನ ಸರಣಿ">day streak</div></div>
+        <div><span class="big-num" id="c-longest">0</span>
+             <div class="muted" data-en="best streak" data-kn="ಅತ್ಯುತ್ತಮ ಸರಣಿ">best streak</div></div>
+        <div><span class="big-num" id="c-days">0</span>
+             <div class="muted" data-en="active days" data-kn="ಸಕ್ರಿಯ ದಿನ">active days</div></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer id="app-footer"></footer>
+<nav id="app-tabbar"></nav>
+
+<script src="assets/app.js"></script>
+<script>
+  renderChrome('progress');
+
+  const session = Session.require();
+  let P = null;
+
+  async function load() {
+    if (!session) return;
+    showLoader('loading', 'Working out your progress...');
+    try {
+      const d = await api('get_progress_data', { p_mobile: session.mobile });
+      if (!d || d.success !== true) throw new Error((d && d.error) || 'RESULT_NOT_FOUND');
+      P = d;
+      document.getElementById('loading').innerHTML = '';
+      if (!d.hasAttempts) { document.getElementById('empty').classList.remove('hidden'); return applyLang(); }
+      document.getElementById('content').classList.remove('hidden');
+      render();
+    } catch (e) {
+      document.getElementById('loading').innerHTML = '';
+      showMsg('err', errorText(e.message));
+    }
+  }
+
+  function render() {
+    document.getElementById('m-ready').textContent = (P.readiness || 0) + '%';
+
+    // percentile is null below 5 students on a paper — out of two people it
+    // is noise, so we say so rather than printing a misleading number
+    const pc = P.percentile || {};
+    document.getElementById('m-pct').textContent =
+      pc.percentile === null || pc.percentile === undefined ? '—' : pc.percentile + 'th';
+
+    renderTrend();
+    renderSubjects();
+    renderFocus();
+    renderTime();
+    renderDiff();
+
+    const st = P.streak || {};
+    document.getElementById('c-streak').textContent  = st.currentStreak || 0;
+    document.getElementById('c-longest').textContent = st.longestStreak || 0;
+    document.getElementById('c-days').textContent    = st.activeDays || 0;
+
+    applyLang();
+  }
+
+  /* inline SVG line chart — no library for one sparkline */
+  function renderTrend() {
+    const pts = (P.trend || []).map(function (t) { return Number(t.score); });
+    const box = document.getElementById('chart');
+    const s = P.summary || {};
+
+    document.getElementById('t-summary').textContent =
+      'Best ' + s.bestScore + ' · Average ' + s.avgScore + ' · Latest ' + s.latestScore;
+
+    const imp = Number(s.improvement || 0);
+    const el = document.getElementById('t-improve');
+    el.textContent = imp === 0 ? '' : (imp > 0 ? '+' + imp : imp) + ' since first';
+    el.style.color = imp > 0 ? 'var(--green)' : imp < 0 ? 'var(--red)' : '';
+
+    if (pts.length < 2) {
+      box.innerHTML = '<p class="muted" style="padding:10px 0">Two attempts and a trend line appears here.</p>';
+      return;
+    }
+
+    const W = 300, H = 70, pad = 6;
+    const max = Math.max.apply(null, pts), min = Math.min.apply(null, pts);
+    const span = (max - min) || 1;
+    const coords = pts.map(function (v, i) {
+      const x = pad + i * (W - pad * 2) / (pts.length - 1);
+      const y = H - pad - ((v - min) / span) * (H - pad * 2);
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    });
+    const last = coords[coords.length - 1].split(',');
+
+    box.innerHTML =
+      '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" height="76" preserveAspectRatio="none" aria-hidden="true">' +
+        '<polyline points="' + coords.join(' ') + '" fill="none" stroke="#c9942c" ' +
+        'stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<circle cx="' + last[0] + '" cy="' + last[1] + '" r="3.4" fill="#c9942c"/>' +
+      '</svg>';
+  }
+
+  function renderSubjects() {
+    const list = P.subjects || [];
+    if (!list.length) return;              // nothing tagged yet — card stays hidden
+    document.getElementById('subj-card').classList.remove('hidden');
+    document.getElementById('subjects').innerHTML = list.map(function (s) {
+      const a = Number(s.accuracy);
+      const col = a >= 70 ? 'var(--green)' : a >= 55 ? 'var(--gold)' : 'var(--red)';
+      return '<div class="row">' +
+        '<span class="k">' + esc(s.subject) + '</span>' +
+        '<span class="bar"><span style="width:' + a + '%;background:' + col + '"></span></span>' +
+        '<span class="v">' + a + '%</span>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderFocus() {
+    const list = P.focusTopics || [];
+    if (!list.length) return;
+    document.getElementById('focus-card').classList.remove('hidden');
+    document.getElementById('focus').innerHTML = list.map(function (t) {
+      return '<span class="chip-focus">' + esc(t.topic) + ' ' + Number(t.accuracy) + '%</span>';
+    }).join('');
+  }
+
+  function renderTime() {
+    const t = P.time || {};
+    if (!t.avgSecondsPerQuestion) return;   // no timing captured yet
+    document.getElementById('time-card').classList.remove('hidden');
+    document.getElementById('t-avg').textContent = Math.round(t.avgSecondsPerQuestion) + 's';
+
+    const ok = Number(t.avgOnCorrect || 0), bad = Number(t.avgOnWrong || 0);
+    let line = '';
+    if (ok && bad) {
+      line = bad > ok * 1.25
+        ? 'You spend longer on the ones you get wrong — eliminate more, agonise less.'
+        : ok > bad * 1.25
+          ? 'You answer wrong ones quickly — slowing down on those may help.'
+          : 'Your pace is steady on right and wrong answers alike.';
+      line += '  (' + Math.round(ok) + 's correct vs ' + Math.round(bad) + 's wrong)';
+    }
+    document.getElementById('t-insight').textContent = line;
+  }
+
+  function renderDiff() {
+    const d = P.difficulty || {};
+    const rows = [
+      ['Easy',   d.easy,   'var(--green)'],
+      ['Medium', d.medium, 'var(--gold)'],
+      ['Hard',   d.hard,   'var(--red)'],
+    ].filter(function (r) { return r[1] && Number(r[1].total) > 0; });
+    if (!rows.length) return;
+    document.getElementById('diff-card').classList.remove('hidden');
+    document.getElementById('diff').innerHTML = rows.map(function (r) {
+      const pct = Math.round(Number(r[1].correct) / Number(r[1].total) * 100);
+      return '<div class="row">' +
+        '<span class="k">' + r[0] + '</span>' +
+        '<span class="bar"><span style="width:' + pct + '%;background:' + r[2] + '"></span></span>' +
+        '<span class="v">' + pct + '%</span>' +
+      '</div>';
+    }).join('');
+  }
+
+  document.addEventListener('ne:lang', function () { if (P && P.hasAttempts) render(); else applyLang(); });
+  load();
+</script>
+
+</body>
+</html>

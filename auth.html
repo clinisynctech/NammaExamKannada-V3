@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Namma Exam — Register / Login</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&family=Inter:wght@400;500;600;700&family=Noto+Serif+Kannada:wght@600;700&family=Noto+Sans+Kannada:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0d2b4e; --navy-2:#14396b; --navy-soft:#eaf0f6;
+    --gold:#c9942c; --gold-light:#e8b954;
+    --paper:#f6f3ec; --ink:#1b1f2a; --ink-soft:#565f6e;
+    --green:#1f7a4d; --green-soft:#e6f3ec;
+    --red:#a33b3b; --red-soft:#fbeaea;
+    --line:#dcd6c8; --radius:10px;
+    --font-head-en:'Roboto Slab',serif; --font-body-en:'Inter',sans-serif;
+    --font-head-kn:'Noto Serif Kannada',serif; --font-body-kn:'Noto Sans Kannada',sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background:var(--paper); color:var(--ink); font-family:var(--font-body-en); line-height:1.55; min-height:100vh; }
+  body.lang-kn{ font-family:var(--font-body-kn); }
+  body.lang-kn h1,body.lang-kn h2,body.lang-kn .brand-name{ font-family:var(--font-head-kn); }
+  h1,h2{ font-family:var(--font-head-en); color:var(--navy); }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:1160px; margin:0 auto; padding:0 24px; }
+  button,input{ font-family:inherit; }
+
+  header{ background:var(--paper); border-bottom:1px solid var(--line); }
+  .header-inner{ display:flex; align-items:center; justify-content:space-between; padding:14px 0; }
+  .brand-name{ font-family:var(--font-head-en); font-size:1.25rem; font-weight:700; color:var(--navy); }
+  .brand-name span{ color:var(--gold); }
+  .header-actions{ display:flex; align-items:center; gap:12px; }
+  .lang-toggle{ display:flex; border:1.5px solid var(--navy); border-radius:999px; overflow:hidden; font-size:0.82rem; font-weight:600; }
+  .lang-toggle button{ border:none; background:transparent; color:var(--navy); padding:6px 14px; cursor:pointer; }
+  .lang-toggle button.active{ background:var(--navy); color:#fff; }
+  .back-home{ font-size:0.85rem; color:var(--ink-soft); font-weight:600; }
+  .back-home:hover{ color:var(--navy); }
+
+  .auth-shell{ display:flex; justify-content:center; padding:56px 20px 70px; }
+  .auth-card{ width:100%; max-width:420px; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 20px 50px -30px rgba(13,43,78,0.4); overflow:hidden; }
+
+  .tabs{ display:flex; border-bottom:1px solid var(--line); }
+  .tab{ flex:1; text-align:center; padding:16px 0; font-weight:700; font-size:0.92rem; color:var(--ink-soft); cursor:pointer; background:#fff; border:none; border-bottom:3px solid transparent; }
+  .tab.active{ color:var(--navy); border-bottom-color:var(--gold); }
+
+  .panel{ padding:28px 26px 30px; display:none; }
+  .panel.active{ display:block; }
+  .panel h1{ font-size:1.25rem; margin-bottom:6px; }
+  .panel .sub{ font-size:0.85rem; color:var(--ink-soft); margin-bottom:22px; }
+
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:0.8rem; font-weight:600; color:var(--ink); margin-bottom:6px; }
+  .field input{
+    width:100%; padding:11px 13px; border:1.5px solid var(--line); border-radius:8px;
+    font-size:0.95rem; color:var(--ink); background:var(--paper);
+  }
+  .field input:focus{ outline:none; border-color:var(--navy); background:#fff; }
+  .hint{ font-size:0.75rem; color:var(--ink-soft); margin-top:5px; }
+
+  .btn-primary{
+    width:100%; background:var(--navy); color:#fff; font-weight:700; border:none;
+    padding:13px; border-radius:8px; font-size:0.95rem; cursor:pointer; margin-top:6px;
+  }
+  .btn-primary:hover{ background:var(--navy-2); }
+  .btn-primary:disabled{ opacity:0.6; cursor:not-allowed; }
+
+  .msg{ font-size:0.85rem; padding:10px 12px; border-radius:8px; margin-bottom:16px; display:none; }
+  .msg.error{ background:var(--red-soft); color:var(--red); display:block; }
+  .msg.info{ background:var(--navy-soft); color:var(--navy); display:block; }
+
+  .switcher{ text-align:center; font-size:0.82rem; color:var(--ink-soft); margin-top:18px; }
+  .switcher button{ background:none; border:none; color:var(--navy); font-weight:700; cursor:pointer; text-decoration:underline; }
+
+  /* Code reveal card */
+  .code-reveal{ display:none; }
+  .code-reveal.show{ display:block; }
+  .code-box{
+    background:var(--navy); color:#fff; border-radius:10px; padding:22px; text-align:center;
+    margin-bottom:18px; position:relative; overflow:hidden;
+  }
+  .code-box .lbl{ font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold-light); font-weight:700; margin-bottom:8px; }
+  .code-box .code{ font-family:var(--font-head-en); font-size:2rem; font-weight:700; letter-spacing:0.12em; margin-bottom:10px; }
+  .code-box .copy-btn{
+    background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.4); color:#fff;
+    padding:6px 14px; border-radius:999px; font-size:0.78rem; cursor:pointer; font-weight:600;
+  }
+  .code-box .copy-btn:hover{ background:rgba(255,255,255,0.25); }
+  .save-warning{ font-size:0.82rem; color:var(--red); background:var(--red-soft); padding:10px 12px; border-radius:8px; margin-bottom:18px; font-weight:600; }
+
+  @media (max-width:520px){ .code-box .code{ font-size:1.5rem; letter-spacing:0.08em; } }
+
+  /* ===== Shared footer + WhatsApp button (site-wide component) ===== */
+  .site-footer{ background:var(--navy); }
+  .footer-grid{ display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:20px; padding:28px 20px; max-width:1160px; margin:0 auto; }
+  .footer-col{ display:flex; flex-direction:column; gap:8px; font-size:0.82rem; }
+  .footer-col a{ color:rgba(255,255,255,0.8); text-decoration:none; }
+  .footer-col a:hover{ color:#fff; }
+  .footer-brand-name{ font-family:var(--font-head-en); font-weight:700; font-size:1.05rem; color:#fff; margin-bottom:4px; }
+  .footer-brand-name span{ color:var(--gold-light); }
+  .footer-powered{ font-size:0.78rem; text-decoration:underline; }
+  #whatsapp-container{ position:fixed; bottom:20px; right:20px; z-index:60; }
+  .wa-float{ display:flex; align-items:center; justify-content:center; width:56px; height:56px; background:#25D366; border-radius:50%; box-shadow:0 6px 16px rgba(0,0,0,0.25); transition:transform 0.15s ease; }
+  .wa-float:hover{ transform:scale(1.08); }
+  @media (max-width:640px){ .footer-grid{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <div class="brand-name">Namma <span>Exam</span></div>
+    <div class="header-actions">
+      <div class="lang-toggle">
+        <button id="btn-en" data-lang="en" class="active" onclick="setLang('en')">EN</button>
+        <button id="btn-kn" data-lang="kn" onclick="setLang('kn')">ಕನ್ನಡ</button>
+      </div>
+      <a href="index.html" class="back-home" data-en="← Back to Home" data-kn="← ಮುಖಪುಟಕ್ಕೆ ಹಿಂತಿರುಗಿ">← Back to Home</a>
+    </div>
+  </div>
+</header>
+
+<div class="auth-shell">
+  <div class="auth-card">
+    <div class="tabs">
+      <button class="tab active" id="tab-register" onclick="switchTab('register')" data-en="Register" data-kn="ನೋಂದಣಿ">Register</button>
+      <button class="tab" id="tab-login" onclick="switchTab('login')" data-en="Login" data-kn="ಲಾಗಿನ್">Login</button>
+    </div>
+
+    <!-- REGISTER PANEL -->
+    <div class="panel active" id="panel-register">
+      <div id="register-form-view">
+        <h1 data-en="Create your free account" data-kn="ನಿಮ್ಮ ಉಚಿತ ಖಾತೆ ರಚಿಸಿ">Create your free account</h1>
+        <p class="sub" data-en="Mobile number, name, and a password you'll remember." data-kn="ಮೊಬೈಲ್ ಸಂಖ್ಯೆ, ಹೆಸರು, ಮತ್ತು ನೀವು ನೆನಪಿಡುವ ಪಾಸ್‌ವರ್ಡ್.">Mobile number, name, and a password you'll remember.</p>
+
+        <div class="msg error" id="register-error"></div>
+
+        <div class="field">
+          <label data-en="Mobile Number" data-kn="ಮೊಬೈಲ್ ಸಂಖ್ಯೆ">Mobile Number</label>
+          <input type="tel" id="reg-mobile" placeholder="10-digit mobile number" maxlength="10" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label data-en="Full Name" data-kn="ಪೂರ್ಣ ಹೆಸರು">Full Name</label>
+          <input type="text" id="reg-name" placeholder="As you'd like it on your certificate">
+        </div>
+        <div class="field">
+          <label data-en="Choose a Password" data-kn="ಪಾಸ್‌ವರ್ಡ್ ಆಯ್ಕೆಮಾಡಿ">Choose a Password</label>
+          <input type="password" id="reg-pin" placeholder="Anything you'll remember">
+          <div class="hint" data-en="Type whatever is easy for you to remember. You'll use this every time you login." data-kn="ನೆನಪಿಡಲು ಸುಲಭವಾದುದನ್ನು ಟೈಪ್ ಮಾಡಿ. ಪ್ರತಿ ಬಾರಿ ಲಾಗಿನ್‌ಗೆ ಇದೇ ಬಳಸುತ್ತೀರಿ.">Type whatever is easy for you to remember. You'll use this every time you login.</div>
+        </div>
+        <div class="field">
+          <label data-en="Confirm Password" data-kn="ಪಾಸ್‌ವರ್ಡ್ ದೃಢೀಕರಿಸಿ">Confirm Password</label>
+          <input type="password" id="reg-pin-confirm" placeholder="Type it again">
+        </div>
+
+        <button class="btn-primary" id="register-btn" onclick="doRegister()" data-en="Register — Free" data-kn="ನೋಂದಣಿ — ಉಚಿತ">Register — Free</button>
+
+        <div class="switcher">
+          <span data-en="Already registered?" data-kn="ಈಗಾಗಲೇ ನೋಂದಾಯಿಸಿದ್ದೀರಾ?">Already registered?</span>
+          <button onclick="switchTab('login')" data-en="Login instead" data-kn="ಬದಲಿಗೆ ಲಾಗಿನ್ ಮಾಡಿ">Login instead</button>
+        </div>
+      </div>
+
+      <!-- Shown after successful registration -->
+      <div class="code-reveal" id="code-reveal">
+        <h1 data-en="You're all set!" data-kn="ನೀವು ಸಿದ್ಧರಾಗಿದ್ದೀರಿ!">You're all set!</h1>
+        <p class="sub" data-en="Your account is ready. Use your mobile number and the password you chose to login anytime." data-kn="ನಿಮ್ಮ ಖಾತೆ ಸಿದ್ಧವಾಗಿದೆ. ಯಾವಾಗ ಬೇಕಾದರೂ ಲಾಗಿನ್ ಮಾಡಲು ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಮತ್ತು ಆಯ್ಕೆಮಾಡಿದ ಪಾಸ್‌ವರ್ಡ್ ಬಳಸಿ.">Your account is ready. Use your mobile number and the password you chose to login anytime.</p>
+        <button class="btn-primary" onclick="goToDashboard()" data-en="Continue to Dashboard" data-kn="ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಮುಂದುವರಿಸಿ">Continue to Dashboard</button>
+      </div>
+    </div>
+
+    <!-- LOGIN PANEL -->
+    <div class="panel" id="panel-login">
+      <h1 data-en="Welcome back" data-kn="ಮತ್ತೆ ಸ್ವಾಗತ">Welcome back</h1>
+      <p class="sub" data-en="Login with your mobile number and password." data-kn="ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್‌ನೊಂದಿಗೆ ಲಾಗಿನ್ ಮಾಡಿ.">Login with your mobile number and password.</p>
+
+      <div class="msg error" id="login-error"></div>
+
+      <div class="field">
+        <label data-en="Mobile Number" data-kn="ಮೊಬೈಲ್ ಸಂಖ್ಯೆ">Mobile Number</label>
+        <input type="tel" id="login-mobile" placeholder="10-digit mobile number" maxlength="10" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label data-en="Password" data-kn="ಪಾಸ್‌ವರ್ಡ್">Password</label>
+        <input type="password" id="login-code" placeholder="Your password">
+        <div class="hint" data-en="Forgot your password? Message us on WhatsApp from the home page." data-kn="ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ? ಮುಖಪುಟದಿಂದ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ನಮಗೆ ಸಂದೇಶ ಕಳುಹಿಸಿ.">Forgot your password? Message us on WhatsApp from the home page.</div>
+      </div>
+
+      <button class="btn-primary" id="login-btn" onclick="doLogin()" data-en="Login" data-kn="ಲಾಗಿನ್">Login</button>
+
+      <div class="switcher">
+        <span data-en="New here?" data-kn="ಇಲ್ಲಿ ಹೊಸಬರೇ?">New here?</span>
+        <button onclick="switchTab('register')" data-en="Register instead" data-kn="ಬದಲಿಗೆ ನೋಂದಾಯಿಸಿ">Register instead</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div id="site-footer"></div>
+</footer>
+<div id="whatsapp-container"></div>
+
+<script src="assets/app.js"></script>
+<script src="shared.js"></script>
+<script>
+  /* v2's layout and CSS above are untouched. Only the wiring is v3:
+     api() instead of the Supabase SDK, and the shared language system so a
+     choice made here follows the student to every other page. */
+
+  window.switchTab = function (which) {
+    document.getElementById('tab-register').classList.toggle('active', which === 'register');
+    document.getElementById('tab-login').classList.toggle('active', which === 'login');
+    document.getElementById('panel-register').classList.toggle('active', which === 'register');
+    document.getElementById('panel-login').classList.toggle('active', which === 'login');
+  };
+
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg; el.style.display = 'block';
+  }
+  function hideError(id) { document.getElementById(id).style.display = 'none'; }
+
+  function busy(id, on, label) {
+    const b = document.getElementById(id);
+    b.disabled = on;
+    if (on) { b.dataset.old = b.textContent; b.textContent = label; }
+    else if (b.dataset.old) { b.textContent = b.dataset.old; }
+  }
+
+  // back to the exam they were sent here from, if there was one
+  function destination() {
+    const next = new URLSearchParams(location.search).get('next');
+    return next && /^[a-z0-9._%-]+\.html(\?[^"']*)?$/i.test(next) ? next : 'dashboard.html';
+  }
+
+  window.doRegister = async function () {
+    hideError('register-error');
+    const mobile = document.getElementById('reg-mobile').value.trim();
+    const name   = document.getElementById('reg-name').value.trim();
+    const pw     = document.getElementById('reg-pin').value;
+    const pw2    = document.getElementById('reg-pin-confirm').value;
+
+    if (!/^\d{10}$/.test(mobile)) return showError('register-error', errorText('INVALID_MOBILE'));
+    if (!name)                     return showError('register-error', errorText('NAME_REQUIRED'));
+    if (pw.length < 4)             return showError('register-error', errorText('PASSWORD_TOO_SHORT'));
+    if (pw !== pw2)                return showError('register-error', 'Password and Confirm Password do not match.');
+
+    busy('register-btn', true, 'Please wait...');
+    try {
+      const d = await api('register_student', { p_mobile: mobile, p_name: name, p_password: pw });
+      if (d && d.alreadyRegistered) {
+        showError('register-error', 'This number is already registered. Please use Login instead.');
+        return;
+      }
+      if (!d || d.success !== true) return showError('register-error', errorText(d && d.error));
+      Session.set(d.mobile, d.name);
+      // v2's success screen, kept
+      document.getElementById('register-form-view').style.display = 'none';
+      document.getElementById('code-reveal').classList.add('show');
+    } catch (e) {
+      showError('register-error', errorText(e.message));
+    } finally {
+      busy('register-btn', false);
+    }
+  };
+
+  window.goToDashboard = function () { location.href = destination(); };
+
+  window.doLogin = async function () {
+    hideError('login-error');
+    const mobile = document.getElementById('login-mobile').value.trim();
+    const pw     = document.getElementById('login-code').value;
+
+    if (!/^\d{10}$/.test(mobile)) return showError('login-error', errorText('INVALID_MOBILE'));
+    if (!pw)                       return showError('login-error', 'Please enter your password.');
+
+    busy('login-btn', true, 'Please wait...');
+    try {
+      const d = await api('login_student', { p_mobile: mobile, p_password: pw });
+      if (!d || d.success !== true) {
+        // the backend says how long a locked account must wait
+        if (d && d.error === 'ACCOUNT_LOCKED' && d.retryAfterSeconds) {
+          const mins = Math.ceil(d.retryAfterSeconds / 60);
+          return showError('login-error', 'Too many wrong tries. Try again in ' + mins + ' minute(s).');
+        }
+        return showError('login-error', errorText(d && d.error));
+      }
+      Session.set(d.mobile, d.name);
+      location.href = destination();
+    } catch (e) {
+      showError('login-error', errorText(e.message));
+    } finally {
+      busy('login-btn', false);
+    }
+  };
+
+  if (new URLSearchParams(location.search).get('tab') === 'login') switchTab('login');
+  if (Session.get().mobile) location.replace('dashboard.html');
+
+  renderFooter('site-footer');
+  renderWhatsAppButton('whatsapp-container', 'auth');
+  applyLang();
+  startPromo();
+</script>
+
+</body>
+</html>

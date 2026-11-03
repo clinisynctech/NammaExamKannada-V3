@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Subscribe for ₹49 — Namma Exam</title>
+<meta name="description" content="Unlock every Karnataka government exam paper for one year for ₹49. Pay by UPI and send the screenshot on WhatsApp.">
+<link rel="canonical" href="https://nammaexam.in/subscribe">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d2b4e">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&family=Inter:wght@400;500;600;700&family=Noto+Serif+Kannada:wght@600;700&family=Noto+Sans+Kannada:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .price-top{ background:var(--gold); color:var(--navy); border-radius:var(--radius);
+              padding:20px; text-align:center; margin-bottom:16px; }
+  .price-top .amt{ font-family:var(--font-head); font-size:2.6rem; font-weight:700; line-height:1; }
+  .price-top .was{ text-decoration:line-through; opacity:.6; font-size:1.1rem; margin-left:6px; }
+
+  .inc{ display:flex; gap:9px; align-items:flex-start; font-size:0.9rem; margin-bottom:8px; }
+  .inc svg{ flex:0 0 18px; color:var(--green); margin-top:2px; }
+
+  .stepn{ display:flex; gap:12px; margin-bottom:16px; }
+  .stepn .n{ width:28px; height:28px; flex:0 0 28px; border-radius:50%;
+             background:var(--navy); color:#fff; font-weight:700; font-size:0.84rem;
+             display:flex; align-items:center; justify-content:center; }
+
+  .qr{ text-align:center; }
+  .qr img{ max-width:230px; margin:0 auto; border:1px solid var(--line); border-radius:10px; }
+  .upi-id{ font-family:ui-monospace,Menlo,Consolas,monospace; background:var(--navy-soft);
+           color:var(--navy); padding:9px 13px; border-radius:8px; display:inline-block;
+           margin:10px 0; font-size:0.94rem; }
+  .apps{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<header id="app-header"></header>
+
+<main class="wrap" style="padding-top:18px; padding-bottom:28px; max-width:520px">
+
+  <div class="price-top">
+    <div style="font-size:0.8rem; opacity:.8"
+         data-en="One year, everything unlocked" data-kn="ಒಂದು ವರ್ಷ, ಎಲ್ಲವೂ ಅನ್‌ಲಾಕ್">One year, everything unlocked</div>
+    <div class="amt">₹49<span class="was">₹99</span></div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title" style="margin-bottom:11px"
+         data-en="What you get" data-kn="ನಿಮಗೆ ಸಿಗುವುದು">What you get</div>
+    <div class="inc"><svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 10l4 4 8-8"/></svg>
+      <span data-en="Every paper, every post, every department" data-kn="ಎಲ್ಲಾ ಪತ್ರಿಕೆಗಳು, ಎಲ್ಲಾ ಹುದ್ದೆಗಳು">Every paper, every post, every department</span></div>
+    <div class="inc"><svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 10l4 4 8-8"/></svg>
+      <span data-en="Full answer review with explanations" data-kn="ವಿವರಣೆಗಳೊಂದಿಗೆ ಉತ್ತರ ಪರಿಶೀಲನೆ">Full answer review with explanations</span></div>
+    <div class="inc"><svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 10l4 4 8-8"/></svg>
+      <span data-en="Subject-wise strengths and weak topics" data-kn="ವಿಷಯವಾರು ಸಾಮರ್ಥ್ಯ ಮತ್ತು ದುರ್ಬಲ ವಿಷಯಗಳು">Subject-wise strengths and weak topics</span></div>
+    <div class="inc"><svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 10l4 4 8-8"/></svg>
+      <span data-en="Certificate after every exam" data-kn="ಪ್ರತಿ ಪರೀಕ್ಷೆಯ ನಂತರ ಪ್ರಮಾಣಪತ್ರ">Certificate after every exam</span></div>
+  </div>
+
+  <h2 style="margin-bottom:12px" data-en="How to pay" data-kn="ಪಾವತಿ ಹೇಗೆ">How to pay</h2>
+
+  <div class="card" style="margin-bottom:12px">
+    <div class="stepn">
+      <span class="n">1</span>
+      <div style="flex:1">
+        <b data-en="Pay ₹49 by UPI" data-kn="UPI ಮೂಲಕ ₹49 ಪಾವತಿಸಿ">Pay ₹49 by UPI</b>
+        <div class="qr" style="margin-top:12px">
+          <img src="qrcode.png" alt="UPI QR code" onerror="this.style.display='none'">
+          <div class="upi-id" id="upi-id"></div>
+          <div class="muted" id="payee" style="font-size:0.78rem"></div>
+          <div class="apps">
+            <a class="btn btn-ghost btn-sm" id="pay-gpay">GPay</a>
+            <a class="btn btn-ghost btn-sm" id="pay-phonepe">PhonePe</a>
+            <a class="btn btn-ghost btn-sm" id="pay-any">Other</a>
+          </div>
+          <p class="muted" style="font-size:0.74rem; margin-top:9px"
+             data-en="The app buttons work on a phone. On a laptop, scan the QR instead."
+             data-kn="ಫೋನ್‌ನಲ್ಲಿ ಬಟನ್ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಲ್ಯಾಪ್‌ಟಾಪ್‌ನಲ್ಲಿ QR ಸ್ಕ್ಯಾನ್ ಮಾಡಿ.">The app buttons work on a phone. On a laptop, scan the QR instead.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:12px">
+    <div class="stepn" style="margin-bottom:0">
+      <span class="n">2</span>
+      <div style="flex:1">
+        <b data-en="Send the screenshot on WhatsApp" data-kn="ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ವಾಟ್ಸಾಪ್ ಮಾಡಿ">Send the screenshot on WhatsApp</b>
+        <p class="muted" style="margin:5px 0 11px"
+           data-en="Your registered mobile number is filled in for you."
+           data-kn="ನಿಮ್ಮ ನೋಂದಾಯಿತ ಸಂಖ್ಯೆ ತುಂಬಲಾಗಿದೆ.">Your registered mobile number is filled in for you.</p>
+        <a class="btn btn-primary btn-block" id="wa-btn" target="_blank" rel="noopener"
+           data-en="Open WhatsApp" data-kn="ವಾಟ್ಸಾಪ್ ತೆರೆಯಿರಿ">Open WhatsApp</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="stepn" style="margin-bottom:0">
+      <span class="n">3</span>
+      <div style="flex:1">
+        <b data-en="We activate it" data-kn="ನಾವು ಸಕ್ರಿಯಗೊಳಿಸುತ್ತೇವೆ">We activate it</b>
+        <p class="muted" style="margin-top:5px"
+           data-en="Usually within a few hours. Your dashboard will show Active — no need to pay again."
+           data-kn="ಸಾಮಾನ್ಯವಾಗಿ ಕೆಲವೇ ಗಂಟೆಗಳಲ್ಲಿ. ಮತ್ತೆ ಪಾವತಿಸುವ ಅಗತ್ಯವಿಲ್ಲ.">Usually within a few hours. Your dashboard will show Active — no need to pay again.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="msg msg-info show" style="margin-top:16px; font-size:0.8rem"
+       data-en="We never ask for your UPI PIN, card number or OTP. Anyone who does is not us."
+       data-kn="ನಾವು ಎಂದಿಗೂ ನಿಮ್ಮ UPI PIN ಅಥವಾ OTP ಕೇಳುವುದಿಲ್ಲ.">We never ask for your UPI PIN, card number or OTP. Anyone who does is not us.</div>
+
+</main>
+
+<footer id="app-footer"></footer>
+<nav id="app-tabbar"></nav>
+
+<script src="assets/app.js"></script>
+<script>
+  renderChrome('dash', 'subscribe');
+
+  /* ------------------------------------------------------------------
+     PAYMENT DETAILS — confirm these before going live.
+     The project notes give the real UPI ID as 8088479162@kotakbank with
+     payee "Raghavendra". The v2 site that is live right now shows
+     "nammaexam@upi", which is not a valid VPA format and almost certainly
+     a leftover placeholder. Test with ₹1 before announcing this page.
+     ------------------------------------------------------------------ */
+  const UPI   = '8088479162@kotakbank';
+  const PAYEE = 'Raghavendra';
+  const AMOUNT = SITE.price;
+
+  const link = 'upi://pay?pa=' + encodeURIComponent(UPI) +
+               '&pn=' + encodeURIComponent(PAYEE) +
+               '&am=' + AMOUNT + '&cu=INR' +
+               '&tn=' + encodeURIComponent('Namma Exam subscription');
+
+  document.getElementById('upi-id').textContent = UPI;
+  document.getElementById('payee').textContent  = PAYEE;
+  ['pay-gpay', 'pay-phonepe', 'pay-any'].forEach(function (id) {
+    document.getElementById(id).setAttribute('href', link);
+  });
+
+  const s = Session.get();
+  const msg = 'Hi, I want to subscribe to Namma Exam (Rs ' + AMOUNT + '). ' +
+              'My registered mobile number is ' + (s.mobile || '[your mobile number]') + '. ' +
+              'Payment screenshot attached.';
+  document.getElementById('wa-btn').setAttribute(
+    'href', 'https://wa.me/' + SITE.whatsapp + '?text=' + encodeURIComponent(msg));
+</script>
+
+</body>
+</html>

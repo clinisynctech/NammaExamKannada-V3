@@ -1,0 +1,317 @@
+/* ============================================================================
+   NAMMA EXAM V3 — SHARED STYLESHEET
+   ============================================================================
+   ONE file for every page. In v2 this block was copied into 18 separate HTML
+   files, so changing a colour meant 18 edits and adding view transitions
+   meant 18 more. Everything visual lives here now.
+
+   Mobile first: base styles are the phone, media queries enhance upward.
+   98% of traffic is Android.
+   ========================================================================= */
+
+:root{
+  --navy:#0d2b4e; --navy-2:#14396b; --navy-soft:#eaf0f6;
+  --gold:#c9942c; --gold-light:#e8b954;
+  --paper:#f6f3ec; --ink:#1b1f2a; --ink-soft:#565f6e;
+  --green:#1f7a4d; --green-soft:#e6f3ec;
+  --red:#a33b3b;   --red-soft:#fbeaea;
+  --amber:#8a6100; --amber-soft:#fff3d9;
+  --line:#dcd6c8;
+  --radius:10px;
+  --font-head:'Roboto Slab',Georgia,serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-head-kn:'Noto Serif Kannada',serif;
+  --font-body-kn:'Noto Sans Kannada',sans-serif;
+  --tabbar-h:58px;
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+html{ -webkit-text-size-adjust:100%; }
+
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  /* stops the whole page rubber-banding on Android */
+  overscroll-behavior-y:contain;
+}
+
+/* Kannada swaps the whole font stack, not just a label */
+body.lang-kn{ font-family:var(--font-body-kn); }
+body.lang-kn h1, body.lang-kn h2, body.lang-kn h3, body.lang-kn .brand-name{
+  font-family:var(--font-head-kn);
+}
+
+h1,h2,h3{ font-family:var(--font-head); color:var(--navy); line-height:1.25; }
+h1{ font-size:1.5rem; }
+h2{ font-size:1.15rem; }
+h3{ font-size:1rem; }
+
+a{ color:inherit; text-decoration:none; }
+img{ max-width:100%; display:block; }
+button,input,select,textarea{ font-family:inherit; font-size:inherit; }
+
+.wrap{ max-width:1100px; margin:0 auto; padding:0 16px; }
+.stack > * + *{ margin-top:14px; }
+.muted{ color:var(--ink-soft); font-size:0.86rem; }
+.center{ text-align:center; }
+.hidden{ display:none !important; }
+
+/* ---------------------------------------------------------------------------
+   App chrome: no text selection, no blue tap flash. These two make a web page
+   stop feeling like a web page more than anything else of their size.
+   ------------------------------------------------------------------------ */
+.app-header,.tabbar,.btn,.tab-btn,.opt,.card-head{
+  -webkit-user-select:none; user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* ---------------------------------------------------------------------------
+   PAGE TRANSITIONS
+   Separate HTML pages flash white between taps, which reads as "browser".
+   Chrome on Android supports cross-document view transitions; anything else
+   ignores these rules entirely. No router, no single page app.
+   ------------------------------------------------------------------------ */
+@view-transition{ navigation:auto; }
+@media (prefers-reduced-motion:no-preference){
+  ::view-transition-old(root){ animation:ne-out .18s ease forwards; }
+  ::view-transition-new(root){ animation:ne-in  .22s ease forwards; }
+}
+@keyframes ne-out{ to{ opacity:0; transform:translateY(-6px); } }
+@keyframes ne-in { from{ opacity:0; transform:translateY(8px); } }
+
+/* ============================================================================
+   HEADER
+   ========================================================================= */
+.app-header{
+  position:sticky; top:0; z-index:40;
+  background:var(--paper);
+  border-bottom:1px solid var(--line);
+  padding-top:env(safe-area-inset-top);
+}
+.app-header-inner{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px; padding:11px 16px; max-width:1100px; margin:0 auto;
+}
+.brand-name{
+  font-family:var(--font-head); font-weight:700; font-size:1.15rem;
+  color:var(--navy); letter-spacing:-0.01em;
+}
+.brand-name span{ color:var(--gold); }
+.header-right{ display:flex; align-items:center; gap:8px; }
+
+.lang-toggle{ display:inline-flex; border:1.5px solid var(--navy); border-radius:999px; overflow:hidden; }
+.lang-toggle button{
+  background:transparent; border:0; color:var(--navy);
+  padding:4px 11px; font-size:0.76rem; font-weight:600; cursor:pointer;
+}
+.lang-toggle button.active{ background:var(--navy); color:#fff; }
+
+/* ============================================================================
+   BOTTOM TAB BAR
+   The single biggest change from v2. Native apps navigate from the bottom;
+   websites navigate from a header. Moving navigation down is read as "app"
+   before a word is read.
+   ========================================================================= */
+.tabbar{
+  position:fixed; left:0; right:0; bottom:0; z-index:50;
+  display:flex; background:#fff;
+  border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom);  /* clears the gesture bar */
+}
+.tabbar a{
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:8px 2px 7px;
+  font-size:0.66rem; color:var(--ink-soft); font-weight:500;
+  min-height:48px;                              /* thumbs, not mice */
+}
+.tabbar a.active{ color:var(--navy); }
+.tabbar a.active .ti{ color:var(--gold); }
+.tabbar .ti{ font-size:19px; line-height:1; }
+
+body.has-tabbar{ padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom)); }
+
+/* Desktop keeps the header nav and drops the bar ... */
+@media (min-width:720px){ .tabbar{ display:none; } body.has-tabbar{ padding-bottom:0; } }
+/* ... but an INSTALLED app is an app at every width. This query is only true
+   when running standalone, which is what lets one stylesheet serve both. */
+@media (display-mode:standalone){
+  .tabbar{ display:flex !important; }
+  body.has-tabbar{ padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom)) !important; }
+  .install-only{ display:none !important; }   /* hide "get the app" inside the app */
+}
+
+/* ============================================================================
+   BUTTONS
+   ========================================================================= */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  min-height:48px; padding:12px 18px;
+  border:0; border-radius:var(--radius);
+  font-weight:700; font-size:0.95rem; cursor:pointer;
+  transition:transform .12s ease, background .15s ease;
+}
+.btn:active{ transform:scale(.985); }
+.btn[disabled]{ opacity:.55; cursor:default; }
+.btn-primary{ background:var(--gold); color:var(--navy); }
+.btn-primary:hover{ background:var(--gold-light); }
+.btn-navy{ background:var(--navy); color:#fff; }
+.btn-navy:hover{ background:var(--navy-2); }
+.btn-ghost{ background:transparent; border:1.5px solid var(--navy); color:var(--navy); }
+.btn-danger{ background:var(--red); color:#fff; }
+.btn-block{ width:100%; }
+.btn-sm{ min-height:38px; padding:8px 13px; font-size:0.84rem; }
+
+/* ============================================================================
+   CARDS, FORMS, BADGES
+   ========================================================================= */
+.card{
+  background:#fff; border:1px solid var(--line);
+  border-radius:var(--radius); padding:16px;
+}
+.card-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+.card-title{ font-family:var(--font-head); font-weight:700; color:var(--navy); font-size:0.98rem; }
+
+.field{ display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+.field label{ font-size:0.8rem; font-weight:600; color:var(--ink-soft); }
+.field input, .field select, .field textarea{
+  min-height:48px; padding:12px 13px;
+  border:1.5px solid var(--line); border-radius:8px;
+  background:#fff; color:var(--ink);
+}
+.field input:focus, .field select:focus, .field textarea:focus{
+  outline:0; border-color:var(--navy); box-shadow:0 0 0 3px var(--navy-soft);
+}
+.field textarea{ min-height:90px; resize:vertical; }
+
+.badge{
+  display:inline-block; padding:3px 10px; border-radius:999px;
+  font-size:0.7rem; font-weight:700; letter-spacing:.02em;
+}
+.badge-active{   background:var(--green-soft); color:var(--green); }
+.badge-inactive{ background:#eee; color:var(--ink-soft); }
+.badge-warn{     background:var(--amber-soft); color:var(--amber); }
+.badge-free{     background:var(--green-soft); color:var(--green); }
+.badge-locked{   background:#eee; color:var(--ink-soft); }
+
+.msg{ padding:11px 13px; border-radius:8px; font-size:0.86rem; margin-top:10px; display:none; }
+.msg.show{ display:block; }
+.msg-err{ background:var(--red-soft); color:var(--red); }
+.msg-ok{  background:var(--green-soft); color:var(--green); }
+.msg-info{ background:var(--navy-soft); color:var(--navy); }
+
+/* ============================================================================
+   TABS (in-page)
+   ========================================================================= */
+.tabs{ display:flex; border-bottom:1px solid var(--line); margin-bottom:16px; }
+.tab-btn{
+  flex:1; background:none; border:0; cursor:pointer;
+  padding:12px 8px; font-weight:700; font-size:0.9rem;
+  color:var(--ink-soft); border-bottom:3px solid transparent;
+}
+.tab-btn.active{ color:var(--navy); border-bottom-color:var(--gold); }
+.panel{ display:none; }
+.panel.active{ display:block; }
+
+/* ============================================================================
+   LOADER + TOAST
+   ========================================================================= */
+.loader{ text-align:center; padding:44px 20px; }
+.loader-bars{ width:108px; margin:0 auto 16px; }
+.loader-line{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.loader-bar{ flex:1; height:6px; background:var(--navy-soft); border-radius:999px; overflow:hidden; }
+.loader-fill{ height:100%; width:0; background:var(--gold); border-radius:999px; animation:ne-fill 1.8s ease-in-out infinite; }
+.loader-line:nth-child(2) .loader-fill{ animation-delay:.2s; }
+.loader-line:nth-child(3) .loader-fill{ animation-delay:.4s; }
+@keyframes ne-fill{ 0%{width:0} 40%{width:100%} 100%{width:100%} }
+.loader-text{ font-size:0.88rem; color:var(--navy); font-weight:600; }
+.loader-sub{ font-size:0.78rem; color:var(--ink-soft); min-height:18px; }
+
+.toast{
+  position:fixed; left:50%; transform:translateX(-50%) translateY(20px);
+  bottom:calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom));
+  background:var(--navy); color:#fff;
+  padding:11px 18px; border-radius:999px; font-size:0.86rem; font-weight:600;
+  opacity:0; pointer-events:none; transition:opacity .22s ease, transform .22s ease;
+  z-index:80; max-width:88vw; text-align:center;
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ============================================================================
+   MODAL / SHEET
+   ========================================================================= */
+.overlay{
+  position:fixed; inset:0; z-index:70;
+  background:rgba(13,43,78,.55);
+  display:none; align-items:flex-end; justify-content:center;
+}
+.overlay.show{ display:flex; }
+.sheet{
+  background:#fff; width:100%; max-width:460px;
+  border-radius:16px 16px 0 0; padding:20px 18px;
+  padding-bottom:calc(20px + env(safe-area-inset-bottom));
+  animation:ne-rise .22s ease;
+}
+@keyframes ne-rise{ from{ transform:translateY(16px); opacity:0 } }
+@media (min-width:720px){
+  .overlay{ align-items:center; }
+  .sheet{ border-radius:16px; }
+}
+
+/* ============================================================================
+   FOOTER
+   ========================================================================= */
+.site-footer{ background:var(--navy); color:rgba(255,255,255,.82); margin-top:28px; }
+.site-footer .wrap{ padding-top:22px; padding-bottom:22px; }
+.footer-grid{ display:grid; gap:16px; }
+.footer-col{ display:flex; flex-direction:column; gap:7px; font-size:0.84rem; }
+.footer-col a:hover{ color:#fff; }
+.footer-brand{ font-family:var(--font-head); font-weight:700; font-size:1.05rem; color:#fff; }
+.footer-brand span{ color:var(--gold-light); }
+@media (min-width:720px){ .footer-grid{ grid-template-columns:1.3fr 1fr 1fr; } }
+
+/* Play Store strip — .install-only is hidden automatically inside the app */
+.play-badge{
+  display:inline-flex; align-items:center; gap:8px;
+  background:#000; color:#fff; padding:7px 14px;
+  border-radius:8px; border:1px solid rgba(255,255,255,.18);
+}
+.play-badge .pb-icon{ width:20px; height:20px; flex-shrink:0; }
+.play-badge .pb-text{ display:flex; flex-direction:column; line-height:1.1; }
+.play-badge .pb-small{ font-size:.56rem; letter-spacing:.06em; text-transform:uppercase; opacity:.85; }
+.play-badge .pb-large{ font-family:var(--font-head); font-size:.86rem; font-weight:700; }
+
+/* ============================================================================
+   WHATSAPP FLOAT
+   Sits above the tab bar, never behind it, and clears the gesture bar.
+   Not on exam.html — that page never renders chrome.
+   ========================================================================= */
+.wa-float{
+  position:fixed; right:16px; z-index:46;
+  bottom:calc(var(--tabbar-h) + 14px + env(safe-area-inset-bottom));
+  width:54px; height:54px; border-radius:50%;
+  background:#25D366;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 14px rgba(0,0,0,.26);
+  transition:transform .14s ease;
+}
+.wa-float:active{ transform:scale(.93); }
+/* desktop has no tab bar, so the button drops to the corner ... */
+@media (min-width:720px){ .wa-float{ bottom:calc(20px + env(safe-area-inset-bottom)); } }
+/* ... but the installed app always has one, at any width */
+@media (display-mode:standalone){
+  .wa-float{ bottom:calc(var(--tabbar-h) + 14px + env(safe-area-inset-bottom)) !important; }
+}
+@media print{ .wa-float{ display:none !important; } }
+
+/* ============================================================================
+   PRINT (result + certificate)
+   ========================================================================= */
+@media print{
+  .app-header,.tabbar,.site-footer,.no-print{ display:none !important; }
+  body{ background:#fff; padding-bottom:0; }
+}

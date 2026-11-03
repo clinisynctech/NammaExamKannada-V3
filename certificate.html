@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Verify a Certificate — Namma Exam</title>
+<meta name="description" content="Check that a Namma Exam certificate of practice is genuine by entering its certificate ID.">
+<link rel="canonical" href="https://nammaexam.in/certificate">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d2b4e">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&family=Inter:wght@400;500;600;700&family=Noto+Serif+Kannada:wght@600;700&family=Noto+Sans+Kannada:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .cert{
+    background:#fff; border:3px double var(--gold); border-radius:12px;
+    padding:28px 22px; text-align:center; position:relative;
+  }
+  .cert-top{ font-family:var(--font-head); color:var(--navy); font-weight:700; font-size:1.05rem; }
+  .cert-sub{ font-size:0.72rem; color:var(--ink-soft); letter-spacing:.08em;
+             text-transform:uppercase; margin-bottom:20px; }
+  .cert-name{ font-family:var(--font-head); font-size:1.6rem; color:var(--navy);
+              font-weight:700; margin:6px 0; }
+  .cert-line{ font-size:0.88rem; color:var(--ink-soft); }
+  .cert-paper{ margin:16px 0; font-weight:600; }
+  .cert-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px;
+              border-top:1px solid var(--line); padding-top:14px; margin-top:18px;
+              font-size:0.76rem; color:var(--ink-soft); }
+  .cert-grid b{ display:block; color:var(--ink); font-size:0.86rem; }
+  .disclaimer{ font-size:0.72rem; color:var(--ink-soft); margin-top:14px; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<header id="app-header"></header>
+
+<main class="wrap" style="padding-top:18px; padding-bottom:28px; max-width:520px">
+
+  <div id="lookup">
+    <h1 style="margin-bottom:6px" data-en="Verify a certificate" data-kn="ಪ್ರಮಾಣಪತ್ರ ಪರಿಶೀಲಿಸಿ">Verify a certificate</h1>
+    <p class="muted" style="margin-bottom:16px"
+       data-en="Enter the certificate ID printed on it."
+       data-kn="ಅದರ ಮೇಲೆ ಮುದ್ರಿತವಾದ ಐಡಿ ನಮೂದಿಸಿ.">Enter the certificate ID printed on it.</p>
+    <div class="card">
+      <div class="field">
+        <label data-en="Certificate ID" data-kn="ಪ್ರಮಾಣಪತ್ರ ಐಡಿ">Certificate ID</label>
+        <input type="text" id="cid" autocapitalize="characters" autocomplete="off"
+               data-ph data-en="e.g. NE2611A1B2C3D4" data-kn="ಉದಾ. NE2611A1B2C3D4">
+      </div>
+      <button class="btn btn-navy btn-block" onclick="lookup()"
+              data-en="Check" data-kn="ಪರಿಶೀಲಿಸಿ">Check</button>
+      <div class="msg" id="err"></div>
+    </div>
+  </div>
+
+  <div id="loading"></div>
+
+  <div id="result" class="hidden">
+    <div class="cert" id="cert">
+      <div class="cert-top">Namma Exam</div>
+      <div class="cert-sub" data-en="Certificate of Practice" data-kn="ಅಭ್ಯಾಸ ಪ್ರಮಾಣಪತ್ರ">Certificate of Practice</div>
+
+      <div class="cert-line" data-en="This is to certify that" data-kn="ಇದರ ಮೂಲಕ ಪ್ರಮಾಣೀಕರಿಸಲಾಗಿದೆ">This is to certify that</div>
+      <div class="cert-name" id="c-name"></div>
+      <div class="cert-line" data-en="has completed this practice exam" data-kn="ಈ ಅಭ್ಯಾಸ ಪರೀಕ್ಷೆಯನ್ನು ಪೂರ್ಣಗೊಳಿಸಿದ್ದಾರೆ">has completed this practice exam</div>
+
+      <div class="cert-paper" id="c-paper"></div>
+
+      <div class="cert-grid">
+        <div><span data-en="Certificate ID" data-kn="ಐಡಿ">Certificate ID</span><b id="c-id"></b></div>
+        <div><span data-en="Date" data-kn="ದಿನಾಂಕ">Date</span><b id="c-date"></b></div>
+        <div><span data-en="Score" data-kn="ಅಂಕ">Score</span><b id="c-score"></b></div>
+        <div><span data-en="Mobile" data-kn="ಮೊಬೈಲ್">Mobile</span><b id="c-mobile"></b></div>
+      </div>
+    </div>
+
+    <p class="disclaimer center"
+       data-en="This is a certificate of practice issued by Namma Exam. It is not a government document and carries no official standing."
+       data-kn="ಇದು ಅಭ್ಯಾಸ ಪ್ರಮಾಣಪತ್ರ ಮಾತ್ರ. ಇದು ಸರ್ಕಾರಿ ದಾಖಲೆಯಲ್ಲ.">This is a certificate of practice issued by Namma Exam. It is not a government document and carries no official standing.</p>
+
+    <div class="actions no-print" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px">
+      <button class="btn btn-navy btn-sm" onclick="window.print()"
+              data-en="Save as PDF" data-kn="PDF ಉಳಿಸಿ">Save as PDF</button>
+      <button class="btn btn-ghost btn-sm" onclick="again()"
+              data-en="Check another" data-kn="ಇನ್ನೊಂದು">Check another</button>
+    </div>
+  </div>
+
+</main>
+
+<footer id="app-footer"></footer>
+<nav id="app-tabbar"></nav>
+
+<script src="assets/app.js"></script>
+<script>
+  renderChrome('dash', 'cert');
+
+  async function lookup(id) {
+    const value = (id || document.getElementById('cid').value).trim().toUpperCase();
+    if (!value) return showMsg('err', 'Please enter a certificate ID.');
+    hideMsg('err');
+    document.getElementById('lookup').classList.add('hidden');
+    showLoader('loading', 'Checking...');
+
+    try {
+      const d = await api('get_certificate', { p_certificate_id: value });
+      document.getElementById('loading').innerHTML = '';
+      if (!d || d.success !== true) throw new Error((d && d.error) || 'CERTIFICATE_NOT_FOUND');
+
+      document.getElementById('c-name').textContent   = d.name;
+      document.getElementById('c-paper').textContent  = d.paperId;
+      document.getElementById('c-id').textContent     = d.certificateId;
+      document.getElementById('c-date').textContent   = d.date;
+      document.getElementById('c-score').textContent  = d.score + ' / ' + d.maxScore;
+      // already masked server side — the full number never reaches this page
+      document.getElementById('c-mobile').textContent = d.mobile;
+
+      document.getElementById('result').classList.remove('hidden');
+      applyLang();
+    } catch (e) {
+      document.getElementById('loading').innerHTML = '';
+      document.getElementById('lookup').classList.remove('hidden');
+      showMsg('err', errorText(e.message));
+    }
+  }
+
+  function again() {
+    document.getElementById('result').classList.add('hidden');
+    document.getElementById('lookup').classList.remove('hidden');
+    document.getElementById('cid').value = '';
+    history.replaceState(null, '', 'certificate.html');
+  }
+
+  document.getElementById('cid').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') lookup();
+  });
+
+  // arriving from a result page link with ?id=
+  const fromUrl = new URLSearchParams(location.search).get('id');
+  if (fromUrl) lookup(fromUrl);
+</script>
+
+</body>
+</html>

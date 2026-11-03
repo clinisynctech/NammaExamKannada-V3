@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Admin — Namma Exam</title>
+<meta name="robots" content="noindex, nofollow">
+<!-- ==========================================================================
+     LOCAL ONLY. Do not upload this file to the website.
+     It is a tool you open from your own computer. Everything it can do is
+     guarded by the admin secret server side, so a copy of this file alone is
+     harmless — but there is no reason to publish the map to your own door.
+     ========================================================================== -->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  body{ padding-bottom:0; }
+  .abar{ background:var(--navy); color:#fff; position:sticky; top:0; z-index:40; }
+  .abar-in{ display:flex; align-items:center; gap:10px; padding:11px 14px; max-width:1100px; margin:0 auto; }
+  .abar .name{ font-family:var(--font-head); font-weight:700; }
+  .abar .name span{ color:var(--gold-light); }
+
+  .anav{ background:#fff; border-bottom:1px solid var(--line); position:sticky; top:46px; z-index:35;
+         overflow-x:auto; }
+  .anav-in{ display:flex; gap:2px; padding:0 10px; min-width:max-content; max-width:1100px; margin:0 auto; }
+  .anav button{ background:none; border:0; cursor:pointer; white-space:nowrap;
+                padding:12px 14px; font-weight:700; font-size:0.84rem; color:var(--ink-soft);
+                border-bottom:3px solid transparent; }
+  .anav button.active{ color:var(--navy); border-bottom-color:var(--gold); }
+
+  .cards{ display:grid; grid-template-columns:repeat(2,1fr); gap:9px; }
+  @media(min-width:680px){ .cards{ grid-template-columns:repeat(3,1fr); } }
+  .kpi{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:13px; }
+  .kpi b{ display:block; font-family:var(--font-head); font-size:1.5rem; color:var(--navy); }
+  .kpi span{ font-size:0.72rem; color:var(--ink-soft); }
+  .kpi.alert{ border-color:var(--gold); background:#fffaf0; }
+
+  table{ width:100%; border-collapse:collapse; font-size:0.82rem; }
+  th,td{ text-align:left; padding:8px 9px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  th{ background:var(--navy-soft); color:var(--navy); font-size:0.7rem; text-transform:uppercase;
+      position:sticky; top:0; }
+  .scroll{ overflow:auto; max-height:460px; border:1px solid var(--line);
+           border-radius:var(--radius); background:#fff; }
+  tr.click{ cursor:pointer; }
+  tr.click:hover{ background:var(--navy-soft); }
+
+  .chart{ display:flex; align-items:flex-end; gap:3px; height:150px; overflow-x:auto; padding:6px 0; }
+  .col{ display:flex; flex-direction:column; align-items:center; gap:2px; min-width:22px; }
+  .bars{ display:flex; gap:1px; align-items:flex-end; height:118px; }
+  .bars i{ width:5px; border-radius:2px 2px 0 0; min-height:2px; display:block; }
+  .lbl{ font-size:0.6rem; color:var(--ink-soft); }
+
+  .row2{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+  .lock{ max-width:380px; margin:70px auto; }
+</style>
+</head>
+<body>
+
+<!-- ===== lock ===== -->
+<div class="wrap lock" id="lock">
+  <div class="card">
+    <h1 style="font-size:1.1rem; margin-bottom:4px">Namma Exam — Admin</h1>
+    <p class="muted" style="margin-bottom:14px">Enter your admin secret.</p>
+    <div class="field"><input type="password" id="secret" autocomplete="off"></div>
+    <button class="btn btn-navy btn-block" id="unlock-btn" onclick="unlock()">Unlock</button>
+    <div class="msg" id="lock-msg"></div>
+    <p class="muted" style="margin-top:14px; font-size:0.76rem">
+      Keep this file on your own computer. Do not upload it to the website.</p>
+  </div>
+</div>
+
+<!-- ===== app ===== -->
+<div id="app" class="hidden">
+  <div class="abar"><div class="abar-in">
+    <span class="name">Namma <span>Exam</span> — Admin</span>
+    <button class="btn btn-ghost btn-sm" style="margin-left:auto; color:#fff; border-color:rgba(255,255,255,.4)"
+            onclick="lock()">Lock</button>
+  </div></div>
+
+  <div class="anav"><div class="anav-in" id="nav"></div></div>
+
+  <main class="wrap" style="padding-top:16px; padding-bottom:40px">
+
+    <!-- OVERVIEW -->
+    <section class="panel active" id="p-over">
+      <div class="cards" id="kpis"></div>
+      <div class="card" style="margin-top:14px">
+        <div class="card-head"><span class="card-title">Needs attention</span>
+          <button class="btn btn-ghost btn-sm" onclick="loadOverview()">Refresh</button></div>
+        <div id="attention"></div>
+      </div>
+      <div class="card" style="margin-top:10px">
+        <div class="card-title" style="margin-bottom:9px">Most attempted papers</div>
+        <div id="toppapers"></div>
+      </div>
+    </section>
+
+    <!-- STUDENTS -->
+    <section class="panel" id="p-students">
+      <div class="row2" style="margin-bottom:12px">
+        <input id="stu-q" placeholder="Search name, mobile or email" oninput="filterStudents()">
+        <button class="btn btn-ghost btn-sm" onclick="loadStudents()">Reload</button>
+      </div>
+      <div id="stu-detail"></div>
+      <div class="scroll"><table id="stu-table"></table></div>
+    </section>
+
+    <!-- BILLING -->
+    <section class="panel" id="p-billing">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:10px">Activate one student</div>
+        <div class="row2">
+          <div class="field"><label>Mobile</label><input id="b-mobile" maxlength="10" inputmode="numeric"></div>
+          <div class="field"><label>Duration</label>
+            <select id="b-days">
+              <option value="30">1 month</option><option value="90">3 months</option>
+              <option value="180">6 months</option><option value="365" selected>1 year</option>
+            </select></div>
+          <div class="field"><label>Note</label><input id="b-note" placeholder="optional"></div>
+        </div>
+        <div class="row2">
+          <button class="btn btn-navy btn-sm" onclick="activateOne()">Activate</button>
+          <button class="btn btn-danger btn-sm" onclick="deactivateOne()">Deactivate</button>
+        </div>
+        <div class="msg" id="b-msg"></div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="card-title" style="margin-bottom:10px">Bulk activate</div>
+        <div class="field">
+          <label>Mobile numbers — one per line or comma separated</label>
+          <textarea id="bulk" rows="4"></textarea>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Duration</label>
+            <select id="bulk-days">
+              <option value="30">1 month</option><option value="90">3 months</option>
+              <option value="365" selected>1 year</option>
+            </select></div>
+          <button class="btn btn-navy btn-sm" onclick="bulkActivate()">Activate all</button>
+        </div>
+        <div class="msg" id="bulk-msg"></div>
+        <div id="bulk-out" style="margin-top:10px"></div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="card-head"><span class="card-title">Subscription log</span>
+          <button class="btn btn-ghost btn-sm" onclick="loadLog()">Reload</button></div>
+        <div class="scroll"><table id="log-table"></table></div>
+      </div>
+    </section>
+
+    <!-- CONTENT -->
+    <section class="panel" id="p-content">
+      <div class="card">
+        <div class="card-head"><span class="card-title">Content health</span>
+          <button class="btn btn-ghost btn-sm" onclick="loadHealth()">Reload</button></div>
+        <div class="cards" id="health"></div>
+        <div class="scroll" style="margin-top:12px"><table id="health-table"></table></div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="card-title" style="margin-bottom:6px">Add or edit</div>
+        <p class="muted" style="margin-bottom:11px">
+          Questions are not here — they live in the Google Sheet. These are for a
+          quick single change; the Sheet is for anything in bulk.</p>
+        <div class="row2">
+          <div class="field"><label>Category ID</label><input id="c-id"></div>
+          <div class="field"><label>Name EN</label><input id="c-en"></div>
+          <div class="field"><label>Name KN</label><input id="c-kn"></div>
+          <button class="btn btn-navy btn-sm" onclick="addCategory()">Save category</button>
+        </div>
+        <div class="row2" style="margin-top:10px">
+          <div class="field"><label>Post ID</label><input id="po-id"></div>
+          <div class="field"><label>Category ID</label><input id="po-cat"></div>
+          <div class="field"><label>Name EN</label><input id="po-en"></div>
+          <div class="field"><label>Syllabus URL</label><input id="po-syl"></div>
+          <button class="btn btn-navy btn-sm" onclick="addPost()">Save post</button>
+        </div>
+        <div class="msg" id="c-msg"></div>
+      </div>
+    </section>
+
+    <!-- ANALYTICS -->
+    <section class="panel" id="p-analytics">
+      <div class="card">
+        <div class="row2">
+          <div class="field"><label>From</label><input type="date" id="a-from"></div>
+          <div class="field"><label>To</label><input type="date" id="a-to"></div>
+          <button class="btn btn-navy btn-sm" onclick="loadAnalytics()">Apply</button>
+        </div>
+      </div>
+      <div class="cards" id="a-totals" style="margin-top:12px"></div>
+      <div class="card" style="margin-top:12px">
+        <div class="chart" id="a-chart"></div>
+        <div class="muted" style="font-size:0.74rem; margin-top:6px">
+          <span style="color:#0d2b4e">■</span> registrations
+          <span style="color:#c9942c; margin-left:9px">■</span> logins
+          <span style="color:#1f7a4d; margin-left:9px">■</span> attempts
+        </div>
+      </div>
+    </section>
+
+    <!-- TOOLS -->
+    <section class="panel" id="p-tools">
+      <div class="card">
+        <div class="card-head"><span class="card-title">Leads</span>
+          <button class="btn btn-ghost btn-sm" onclick="loadLeads()">Reload</button></div>
+        <div class="scroll"><table id="leads-table"></table></div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-head"><span class="card-title">Recent results</span>
+          <button class="btn btn-ghost btn-sm" onclick="loadResults()">Reload</button></div>
+        <div class="scroll"><table id="res-table"></table></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+/* The secret lives in sessionStorage only — it dies when the tab closes,
+   and never touches localStorage where it would persist on a shared PC. */
+let SECRET = sessionStorage.getItem('ne_admin') || '';
+let students = [], current = null;
+
+const TABS = [
+  ['over','Overview'], ['students','Students'], ['billing','Billing'],
+  ['content','Content'], ['analytics','Analytics'], ['tools','Tools'],
+];
+
+document.getElementById('nav').innerHTML = TABS.map(function (t, i) {
+  return '<button class="' + (i === 0 ? 'active' : '') + '" data-t="' + t[0] +
+         '" onclick="tab(\'' + t[0] + '\')">' + t[1] + '</button>';
+}).join('');
+
+function tab(id) {
+  document.querySelectorAll('.anav button').forEach(function (b) {
+    b.classList.toggle('active', b.dataset.t === id);
+  });
+  document.querySelectorAll('main .panel').forEach(function (p) {
+    p.classList.toggle('active', p.id === 'p-' + id);
+  });
+  if (id === 'students'  && !students.length) loadStudents();
+  if (id === 'billing')   loadLog();
+  if (id === 'content')   loadHealth();
+  if (id === 'analytics') { if (!document.getElementById('a-from').value) range(30); loadAnalytics(); }
+  if (id === 'tools')     { loadLeads(); loadResults(); }
+}
+
+/* ===== auth ===== */
+async function unlock() {
+  const v = document.getElementById('secret').value.trim();
+  if (!v) return showMsg('lock-msg', 'Enter the secret.');
+  const btn = document.getElementById('unlock-btn');
+  btn.disabled = true; btn.textContent = 'Checking...';
+  try {
+    const d = await api('get_stats', { p_admin_secret: v });
+    if (!d || d.totalStudents === undefined) throw new Error('ADMIN_UNAUTHORIZED');
+    SECRET = v; sessionStorage.setItem('ne_admin', v);
+    document.getElementById('lock').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    paintKpis(d); loadOverview();
+  } catch (e) {
+    showMsg('lock-msg', /UNAUTHORIZED|ADMIN/.test(e.message)
+      ? 'That secret is not right.'
+      : (e.message.indexOf('NOT_SET') !== -1
+          ? 'No admin secret is set yet. Run set_admin_secret in Supabase first.'
+          : errorText(e.message)));
+  } finally { btn.disabled = false; btn.textContent = 'Unlock'; }
+}
+function lock() {
+  SECRET = ''; sessionStorage.removeItem('ne_admin');
+  location.reload();
+}
+function adm(extra) { return Object.assign({ p_admin_secret: SECRET }, extra || {}); }
+
+/* ===== overview ===== */
+async function loadOverview() {
+  try {
+    const d = await api('get_stats', adm());
+    paintKpis(d);
+
+    const a = [];
+    if (d.expiringIn7Days > 0)
+      a.push(['⏳', d.expiringIn7Days + ' subscription(s) expire within 7 days', 'Message them on WhatsApp to renew.']);
+    if (d.studentsAtLimit > 0)
+      a.push(['🔁', d.studentsAtLimit + ' student(s) have used all attempts on a paper', 'Extend them from the Students tab.']);
+    document.getElementById('attention').innerHTML = a.length
+      ? a.map(function (x) {
+          return '<div style="padding:9px 0; border-bottom:1px solid var(--line)">' +
+                 '<b>' + x[1] + '</b><div class="muted">' + x[2] + '</div></div>';
+        }).join('')
+      : '<p class="muted">Nothing needs you right now.</p>';
+
+    document.getElementById('toppapers').innerHTML = (d.topPapers || []).length
+      ? (d.topPapers || []).map(function (p) {
+          return '<div style="display:flex; justify-content:space-between; padding:6px 0; ' +
+                 'border-bottom:1px solid var(--line)"><span>' + esc(p.paperId) +
+                 '</span><b>' + p.attempts + '</b></div>';
+        }).join('')
+      : '<p class="muted">No attempts yet.</p>';
+  } catch (e) { toast(errorText(e.message)); }
+}
+
+function paintKpis(d) {
+  const revenue = (d.activeSubscriptions || 0) * SITE.price;
+  document.getElementById('kpis').innerHTML =
+    kpi(d.totalStudents, 'total students') +
+    kpi(d.newToday, 'new today') +
+    kpi(d.newThisWeek, 'new this week') +
+    kpi(d.activeSubscriptions, 'active subs · ₹' + revenue.toLocaleString('en-IN')) +
+    kpi(d.todayAttempts, 'attempts today') +
+    kpi((d.conversionPercent || 0) + '%', 'free to paid') +
+    (d.expiringIn7Days ? kpi(d.expiringIn7Days, 'expiring in 7 days', true) : '') +
+    (d.studentsAtLimit ? kpi(d.studentsAtLimit, 'at attempt limit', true) : '');
+}
+function kpi(v, label, alert) {
+  return '<div class="kpi' + (alert ? ' alert' : '') + '"><b>' + v + '</b><span>' + label + '</span></div>';
+}
+
+/* ===== students ===== */
+async function loadStudents() {
+  try {
+    students = await api('get_all_students', adm({ p_limit: 2000 }));
+    renderStudents(students);
+  } catch (e) { toast(errorText(e.message)); }
+}
+function filterStudents() {
+  const q = document.getElementById('stu-q').value.trim().toLowerCase();
+  renderStudents(!q ? students : students.filter(function (s) {
+    return (s.mobile + ' ' + (s.name || '') + ' ' + (s.email || '')).toLowerCase().indexOf(q) !== -1;
+  }));
+}
+function renderStudents(list) {
+  const t = document.getElementById('stu-table');
+  if (!list.length) { t.innerHTML = '<tr><td style="padding:16px">No students.</td></tr>'; return; }
+  t.innerHTML = '<thead><tr><th>Name</th><th>Mobile</th><th>Status</th><th>Expiry</th><th>Joined</th></tr></thead><tbody>' +
+    list.slice(0, 500).map(function (s) {
+      return '<tr class="click" onclick="openStudent(\'' + esc(s.mobile) + '\')">' +
+        '<td>' + esc(s.name) + (s.locked ? ' <span class="badge badge-warn">locked</span>' : '') + '</td>' +
+        '<td>' + esc(s.mobile) + '</td>' +
+        '<td><span class="badge ' + (s.subscribed === 'Active' ? 'badge-active' : 'badge-inactive') + '">' +
+          esc(s.subscribed) + '</span></td>' +
+        '<td>' + esc(s.expiry || '—') + '</td><td>' + esc(s.registered || '—') + '</td></tr>';
+    }).join('') + '</tbody>';
+}
+
+/* The student hub: every action for one person on one card, instead of
+   retyping their mobile into three separate tabs the way v2 needed. */
+async function openStudent(mobile) {
+  try {
+    const d = await api('get_student_detail', adm({ p_mobile: mobile }));
+    if (!d || d.success !== true) return toast(errorText(d && d.error));
+    current = d;
+    const s = d.student;
+    document.getElementById('stu-detail').innerHTML =
+      '<div class="card" style="margin-bottom:12px">' +
+        '<div class="card-head"><span class="card-title">' + esc(s.name) + ' · ' + esc(s.mobile) + '</span>' +
+          '<button class="btn btn-ghost btn-sm" onclick="closeStudent()">Close</button></div>' +
+        '<div class="row2" style="margin-bottom:10px">' +
+          '<div><span class="muted">Status</span><br><span class="badge ' +
+            (s.subscribed === 'Active' ? 'badge-active' : 'badge-inactive') + '">' + esc(s.subscribed) + '</span></div>' +
+          '<div><span class="muted">Expiry</span><br><b>' + esc(s.expiry || '—') + '</b></div>' +
+          '<div><span class="muted">Joined</span><br><b>' + esc(s.registered || '—') + '</b></div>' +
+          '<div><span class="muted">Last login</span><br><b>' + esc(s.lastLogin || '—') + '</b></div>' +
+        '</div>' +
+        '<div class="row2" style="margin-bottom:12px">' +
+          '<button class="btn btn-navy btn-sm" onclick="quickActivate(\'' + esc(s.mobile) + '\')">Activate 1 year</button>' +
+          '<button class="btn btn-danger btn-sm" onclick="quickDeactivate(\'' + esc(s.mobile) + '\')">Deactivate</button>' +
+        '</div>' +
+        '<div class="card-title" style="margin-bottom:7px">Papers attempted</div>' +
+        ((d.papers || []).length
+          ? '<div class="scroll" style="max-height:280px"><table><thead><tr><th>Paper</th><th>Used</th>' +
+            '<th>Best</th><th>Last</th><th>Attempts</th></tr></thead><tbody>' +
+            d.papers.map(function (p) {
+              return '<tr><td>' + esc(p.paperId) + '</td>' +
+                '<td>' + p.attemptsUsed + ' / ' + p.attemptLimit +
+                  (p.extraAttempts ? ' <span class="badge badge-warn">+' + p.extraAttempts + '</span>' : '') + '</td>' +
+                '<td>' + p.bestScore + '</td><td>' + esc(p.lastAttempt || '—') + '</td>' +
+                '<td><button class="btn btn-ghost btn-sm" onclick="extend(\'' + esc(s.mobile) + '\',\'' +
+                  esc(p.paperId) + '\')">+5</button> ' +
+                  '<button class="btn btn-ghost btn-sm" onclick="resetAtt(\'' + esc(s.mobile) + '\',\'' +
+                  esc(p.paperId) + '\')">Reset</button></td></tr>';
+            }).join('') + '</tbody></table></div>'
+          : '<p class="muted">No attempts yet.</p>') +
+      '</div>';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (e) { toast(errorText(e.message)); }
+}
+function closeStudent() { document.getElementById('stu-detail').innerHTML = ''; current = null; }
+
+async function quickActivate(m)   { await sub('activate_subscription', { p_mobile: m, p_duration_days: 365 }, m); }
+async function quickDeactivate(m) { if (confirm('Deactivate ' + m + '?')) await sub('deactivate_subscription', { p_mobile: m }, m); }
+async function sub(fn, args, reopen) {
+  try {
+    const d = await api(fn, adm(args));
+    if (!d || d.success !== true) return toast(errorText(d && d.error));
+    toast('Done' + (d.expiry ? ' — valid until ' + d.expiry : ''));
+    await loadStudents(); if (reopen) openStudent(reopen);
+  } catch (e) { toast(errorText(e.message)); }
+}
+
+async function extend(mobile, paper) {
+  try {
+    const d = await api('set_attempt_override',
+      adm({ p_mobile: mobile, p_paper_id: paper, p_extra_attempts: 5, p_note: 'admin +5' }));
+    if (!d || d.success !== true) return toast(errorText(d && d.error));
+    toast('Limit is now ' + d.attemptLimit);
+    openStudent(mobile);
+  } catch (e) { toast(errorText(e.message)); }
+}
+async function resetAtt(mobile, paper) {
+  if (!confirm('Give a full fresh allowance on ' + paper + '?\n\nTheir past results are kept.')) return;
+  try {
+    const d = await api('reset_attempts', adm({ p_mobile: mobile, p_paper_id: paper }));
+    if (!d || d.success !== true) return toast(errorText(d && d.error));
+    toast('Reset — limit is now ' + d.attemptLimit);
+    openStudent(mobile);
+  } catch (e) { toast(errorText(e.message)); }
+}
+
+/* ===== billing ===== */
+async function activateOne() {
+  const m = document.getElementById('b-mobile').value.trim();
+  if (!/^\d{10}$/.test(m)) return showMsg('b-msg', 'Enter a 10-digit mobile.');
+  try {
+    const d = await api('activate_subscription', adm({
+      p_mobile: m,
+      p_duration_days: parseInt(document.getElementById('b-days').value, 10),
+      p_note: document.getElementById('b-note').value || null,
+    }));
+    if (!d || d.success !== true) return showMsg('b-msg', errorText(d && d.error));
+    showMsg('b-msg', 'Activated until ' + d.expiry, 'ok');
+    loadLog();
+  } catch (e) { showMsg('b-msg', errorText(e.message)); }
+}
+async function deactivateOne() {
+  const m = document.getElementById('b-mobile').value.trim();
+  if (!confirm('Deactivate ' + m + '?')) return;
+  try {
+    const d = await api('deactivate_subscription', adm({ p_mobile: m }));
+    showMsg('b-msg', d && d.success ? 'Deactivated.' : errorText(d && d.error), d && d.success ? 'ok' : 'err');
+    loadLog();
+  } catch (e) { showMsg('b-msg', errorText(e.message)); }
+}
+
+async function bulkActivate() {
+  const raw = document.getElementById('bulk').value.trim();
+  const list = raw.split(/[\n,]+/).map(function (x) { return x.trim(); }).filter(Boolean);
+  if (!list.length) return showMsg('bulk-msg', 'Paste at least one mobile number.');
+  if (!confirm('Activate ' + list.length + ' student(s)?')) return;
+  showMsg('bulk-msg', 'Working...', 'info');
+  try {
+    const d = await api('bulk_activate_subscriptions', adm({
+      p_mobiles: list,
+      p_duration_days: parseInt(document.getElementById('bulk-days').value, 10),
+      p_note: 'bulk',
+    }));
+    showMsg('bulk-msg', d.successCount + ' activated, ' + d.failCount + ' failed',
+            d.failCount ? 'info' : 'ok');
+    let html = '';
+    if (d.failCount) {
+      html += '<b style="color:var(--red)">Failed</b>';
+      Object.keys(d.failReasons || {}).forEach(function (k) {
+        html += '<div class="muted">' + esc(k) + ' — ' + esc(d.failReasons[k]) + '</div>';
+      });
+    }
+    document.getElementById('bulk-out').innerHTML = html;
+    loadLog();
+  } catch (e) { showMsg('bulk-msg', errorText(e.message)); }
+}
+
+async function loadLog() {
+  try {
+    const rows = await api('get_subscription_log', adm({ p_limit: 200 }));
+    simpleTable('log-table', rows, ['created_at','mobile','action','duration_days','new_expiry','note']);
+  } catch (e) {}
+}
+
+/* ===== content ===== */
+async function loadHealth() {
+  try {
+    const d = await api('get_content_health', adm());
+    document.getElementById('health').innerHTML =
+      kpi(d.papers, 'papers') + kpi(d.questions, 'questions') +
+      kpi(d.drafts, 'drafts', d.drafts > 0) +
+      kpi(d.untaggedSubject, 'no subject', d.untaggedSubject > 0) +
+      kpi(d.untaggedTopic, 'no topic') +
+      kpi(d.noKannada, 'no Kannada', d.noKannada > 0);
+    simpleTable('health-table', d.byPaper || [],
+                ['paperId','questions','taggedSubject','missingKannada','drafts']);
+  } catch (e) { toast(errorText(e.message)); }
+}
+
+async function addCategory() {
+  try {
+    const d = await api('add_category', adm({
+      p_category_id: document.getElementById('c-id').value.trim(),
+      p_name_en: document.getElementById('c-en').value.trim(),
+      p_name_kn: document.getElementById('c-kn').value.trim() || null,
+    }));
+    showMsg('c-msg', d && d.success ? 'Category saved.' : errorText(d && d.error),
+            d && d.success ? 'ok' : 'err');
+  } catch (e) { showMsg('c-msg', errorText(e.message)); }
+}
+async function addPost() {
+  try {
+    const d = await api('add_post', adm({
+      p_post_id: document.getElementById('po-id').value.trim(),
+      p_category_id: document.getElementById('po-cat').value.trim(),
+      p_name_en: document.getElementById('po-en').value.trim(),
+      p_syllabus_url: document.getElementById('po-syl').value.trim() || null,
+    }));
+    showMsg('c-msg', d && d.success ? 'Post saved.' : errorText(d && d.error),
+            d && d.success ? 'ok' : 'err');
+  } catch (e) { showMsg('c-msg', errorText(e.message)); }
+}
+
+/* ===== analytics ===== */
+function range(days) {
+  const to = new Date(), from = new Date();
+  from.setDate(from.getDate() - (days - 1));
+  document.getElementById('a-from').value = from.toISOString().slice(0, 10);
+  document.getElementById('a-to').value   = to.toISOString().slice(0, 10);
+}
+async function loadAnalytics() {
+  const from = document.getElementById('a-from').value, to = document.getElementById('a-to').value;
+  if (!from || !to) return;
+  try {
+    const d = await api('get_analytics', adm({ p_from: from, p_to: to }));
+    document.getElementById('a-totals').innerHTML =
+      kpi(d.totalRegistrations, 'registrations') +
+      kpi(d.totalLogins, 'logins') +
+      kpi(d.totalAttempts, 'attempts');
+    const daily = d.daily || [];
+    let max = 1;
+    daily.forEach(function (x) { max = Math.max(max, x.registrations, x.logins, x.attempts); });
+    document.getElementById('a-chart').innerHTML = daily.map(function (x) {
+      function h(v) { return Math.round(v / max * 112) + 'px'; }
+      return '<div class="col"><div class="bars">' +
+        '<i style="height:' + h(x.registrations) + ';background:#0d2b4e"></i>' +
+        '<i style="height:' + h(x.logins) + ';background:#c9942c"></i>' +
+        '<i style="height:' + h(x.attempts) + ';background:#1f7a4d"></i>' +
+        '</div><span class="lbl">' + x.day.slice(5) + '</span></div>';
+    }).join('');
+  } catch (e) { toast(errorText(e.message)); }
+}
+
+/* ===== tools ===== */
+async function loadLeads() {
+  try { simpleTable('leads-table', await api('get_leads', adm()),
+                    ['created_at','name','mobile','post_interested','query','contacted']); } catch (e) {}
+}
+async function loadResults() {
+  try { simpleTable('res-table', await api('get_all_results', adm({ p_limit: 300 })),
+                    ['date','name','mobile','paperId','score','maxScore','accuracy']); } catch (e) {}
+}
+
+/* Shared table renderer. Everything goes through esc() — v2 wrote student
+   names straight into innerHTML, which made the admin panel the one place a
+   malicious name could actually execute. */
+function simpleTable(id, rows, cols) {
+  const t = document.getElementById(id);
+  if (!rows || !rows.length) { t.innerHTML = '<tr><td style="padding:16px">Nothing yet.</td></tr>'; return; }
+  t.innerHTML = '<thead><tr>' + cols.map(function (c) {
+      return '<th>' + c.replace(/_/g, ' ') + '</th>'; }).join('') + '</tr></thead><tbody>' +
+    rows.map(function (r) {
+      return '<tr>' + cols.map(function (c) {
+        const v = r[c];
+        return '<td>' + esc(v === null || v === undefined || v === '' ? '—' : v) + '</td>';
+      }).join('') + '</tr>';
+    }).join('') + '</tbody>';
+}
+
+document.getElementById('secret').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') unlock();
+});
+if (SECRET) { document.getElementById('secret').value = SECRET; unlock(); }
+</script>
+
+</body>
+</html>

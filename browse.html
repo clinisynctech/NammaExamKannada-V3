@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Browse Papers — Namma Exam</title>
+<meta name="description" content="Every Karnataka government exam paper in one place — VAO, PSI, FDA, SDA, Police Constable, KAS and teacher recruitment. No login needed to look around.">
+<link rel="canonical" href="https://nammaexam.in/browse">
+<meta property="og:title" content="Browse Karnataka Govt Exam Papers — Namma Exam">
+<meta property="og:description" content="Previous-year papers for every department. The latest paper on each post is free to try.">
+<meta property="og:type" content="website">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d2b4e">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&family=Inter:wght@400;500;600;700&family=Noto+Serif+Kannada:wght@600;700&family=Noto+Sans+Kannada:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .browse-hero{ background:var(--navy); color:#fff; border-radius:var(--radius); padding:20px 18px; margin-bottom:16px; }
+  .browse-hero h1{ color:#fff; font-size:1.3rem; margin-bottom:6px; }
+  .browse-hero p{ font-size:0.88rem; color:rgba(255,255,255,.8); }
+
+  .search-row{ position:relative; margin-bottom:14px; }
+  .search-row input{
+    width:100%; min-height:48px; padding:12px 40px 12px 14px;
+    border:1.5px solid var(--line); border-radius:var(--radius); background:#fff;
+  }
+  .search-row input:focus{ outline:0; border-color:var(--navy); box-shadow:0 0 0 3px var(--navy-soft); }
+  .search-clear{
+    position:absolute; right:6px; top:50%; transform:translateY(-50%);
+    background:none; border:0; color:var(--ink-soft); font-size:1.2rem;
+    width:34px; height:34px; cursor:pointer; display:none;
+  }
+  .search-clear.show{ display:block; }
+
+  .cat{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); margin-bottom:10px; overflow:hidden; }
+  .cat-head{ display:flex; align-items:center; gap:12px; padding:14px; cursor:pointer; }
+  .cat-icon{
+    width:40px; height:40px; flex:0 0 40px; border-radius:9px;
+    background:var(--navy-soft); color:var(--navy);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cat-name{ font-family:var(--font-head); font-weight:700; color:var(--navy); font-size:0.98rem; line-height:1.3; }
+  .cat-meta{ font-size:0.74rem; color:var(--ink-soft); margin-top:2px; }
+  .cat-chev{ margin-left:auto; color:var(--ink-soft); transition:transform .2s ease; flex:0 0 auto; }
+  .cat.open .cat-chev{ transform:rotate(180deg); }
+  .cat-body{ display:none; border-top:1px solid var(--line); padding:4px 14px 14px; }
+  .cat.open .cat-body{ display:block; }
+
+  .post{ padding-top:14px; }
+  .post + .post{ border-top:1px dashed var(--line); margin-top:4px; }
+  .post-name{ font-weight:700; font-size:0.9rem; color:var(--ink); }
+  .syllabus{ display:inline-block; font-size:0.74rem; color:var(--navy); text-decoration:underline; margin-top:3px; }
+
+  .papers{ display:grid; grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); gap:9px; margin-top:10px; }
+  .paper{ border:1px solid var(--line); border-radius:9px; padding:11px; text-align:center; background:var(--paper); }
+  .paper-year{ font-family:var(--font-head); font-weight:700; font-size:1.02rem; color:var(--navy); }
+  .paper-meta{ font-size:0.68rem; color:var(--ink-soft); margin:2px 0 8px; }
+  .paper .btn{ width:100%; }
+
+  .empty{ text-align:center; padding:32px 16px; color:var(--ink-soft); }
+</style>
+</head>
+<body>
+
+<header id="app-header"></header>
+
+<main class="wrap" style="padding-top:16px; padding-bottom:24px;">
+
+  <div class="browse-hero">
+    <h1 data-en="Every department, every post" data-kn="ಎಲ್ಲಾ ಇಲಾಖೆಗಳು, ಎಲ್ಲಾ ಹುದ್ದೆಗಳು">Every department, every post</h1>
+    <p data-en="No login needed to look around. Free papers are marked."
+       data-kn="ನೋಡಲು ಲಾಗಿನ್ ಅಗತ್ಯವಿಲ್ಲ. ಉಚಿತ ಪತ್ರಿಕೆಗಳನ್ನು ಗುರುತಿಸಲಾಗಿದೆ.">No login needed to look around. Free papers are marked.</p>
+  </div>
+
+  <div class="search-row">
+    <input type="search" id="q" autocomplete="off"
+           data-ph data-en="Search a post — VAO, PSI, FDA..." data-kn="ಹುದ್ದೆ ಹುಡುಕಿ — VAO, PSI, FDA...">
+    <button class="search-clear" id="q-clear" aria-label="Clear" onclick="clearSearch()">&times;</button>
+  </div>
+
+  <div id="loading"></div>
+  <div class="msg" id="err"></div>
+  <div id="cats"></div>
+
+</main>
+
+<footer id="app-footer"></footer>
+<nav id="app-tabbar"></nav>
+
+<script src="assets/app.js"></script>
+<script>
+  renderChrome('browse');
+
+  const CACHE_KEY = 'ne_catalog_v3';
+  const CACHE_TTL = 5 * 60 * 1000;
+  let catalog = null;
+  let query = '';
+
+  /* --------------------------------------------------------------------
+     Category icons, matched on the NAME rather than a hardcoded ID map.
+     v2 keyed icons off category_id and only ever mapped CAT01, so nine of
+     ten departments showed the same generic book. Matching on keywords
+     means a department added next year gets a sensible icon with no code
+     change at all.
+     ----------------------------------------------------------------- */
+  const ICON_RULES = [
+    { re:/police|constable|psi|ksrp|car\/dar|irb|ksisf/i, d:'M12 3l7 3v6c0 4.2-3 7.5-7 9-4-1.5-7-4.8-7-9V6z' },
+    { re:/teacher|gpstr|hstr|gpt|kreis|educat/i,          d:'M3 6l9-3 9 3-9 3zM6 10v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5' },
+    { re:/survey|surveyor|land/i,                         d:'M3 17l6-10 4 6 3-4 5 8zM3 21h18' },
+    { re:/revenue|vao|village|accountant/i,               d:'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6' },
+    { re:/assistant|fda|sda|clerk|division/i,             d:'M7 3h7l5 5v13H7zM14 3v5h5M9 13h7M9 17h7' },
+    { re:/kas|kpsc|kea|group/i,                           d:'M12 3l2.6 5.6 6 .8-4.4 4.2 1.1 6-5.3-2.9L6.7 19.6l1.1-6L3.4 9.4l6-.8z' },
+  ];
+  const ICON_DEFAULT = 'M7 3h10v18H7zM10 7h4M10 11h4M10 15h4';
+
+  function catIcon(name) {
+    const rule = ICON_RULES.find(function (r) { return r.re.test(name || ''); });
+    return '<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" ' +
+           'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+           '<path d="' + (rule ? rule.d : ICON_DEFAULT) + '"/></svg>';
+  }
+
+  /* --------------------------------------------------------------------
+     Load: show the cached copy instantly, then refresh behind it.
+     The catalog query is the slowest call in the app, so a returning
+     visitor should never wait on it.
+     ----------------------------------------------------------------- */
+  async function load() {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (raw) {
+        const c = JSON.parse(raw);
+        if (Date.now() - c.time < CACHE_TTL) {
+          catalog = c.data;
+          render();
+          refresh();
+          return;
+        }
+      }
+    } catch (e) {}
+
+    showLoader('loading', 'Loading departments...');
+    try {
+      catalog = await api('get_catalog');
+      cache();
+      render();
+    } catch (e) {
+      document.getElementById('loading').innerHTML = '';
+      showMsg('err', errorText(e.message));
+    }
+  }
+
+  async function refresh() {
+    try { catalog = await api('get_catalog'); cache(); render(); } catch (e) {}
+  }
+  function cache() {
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ time: Date.now(), data: catalog })); } catch (e) {}
+  }
+
+  /* --------------------------------------------------------------------
+     Render
+     ----------------------------------------------------------------- */
+  function render() {
+    document.getElementById('loading').innerHTML = '';
+    const box = document.getElementById('cats');
+    if (!catalog || !catalog.categories || !catalog.categories.length) {
+      box.innerHTML = '<div class="empty">No departments yet. Check back soon.</div>';
+      return;
+    }
+
+    const q = query.trim().toLowerCase();
+    let shown = 0;
+
+    box.innerHTML = catalog.categories.map(function (cat, idx) {
+      const catName = pick(cat.nameEn, cat.nameKn);
+
+      // when searching, keep only the posts that match
+      const posts = (cat.posts || []).filter(function (p) {
+        if (!q) return true;
+        return (pick(p.nameEn, p.nameKn) + ' ' + catName).toLowerCase().indexOf(q) !== -1;
+      });
+      if (!posts.length) return '';
+      shown++;
+
+      let papers = 0, free = 0;
+      posts.forEach(function (p) {
+        papers += (p.papers || []).length;
+        free   += (p.papers || []).filter(function (x) { return x.status === 'free'; }).length;
+      });
+
+      const open = q ? ' open' : '';
+
+      return '<div class="cat' + open + '" id="cat-' + idx + '">' +
+        '<div class="cat-head" onclick="toggleCat(' + idx + ')">' +
+          '<span class="cat-icon">' + catIcon(cat.nameEn || '') + '</span>' +
+          '<span>' +
+            '<span class="cat-name">' + esc(catName) + '</span>' +
+            '<span class="cat-meta">' + posts.length + ' posts · ' + papers + ' papers' +
+              (free ? ' · <b style="color:var(--green)">' + free + ' free</b>' : '') +
+            '</span>' +
+          '</span>' +
+          '<span class="cat-chev">' +
+            '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" ' +
+            'stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>' +
+          '</span>' +
+        '</div>' +
+        '<div class="cat-body">' + posts.map(renderPost).join('') + '</div>' +
+      '</div>';
+    }).join('');
+
+    if (!shown) {
+      box.innerHTML = '<div class="empty">Nothing matches &ldquo;' + esc(query) + '&rdquo;.</div>';
+    }
+  }
+
+  function renderPost(p) {
+    const papers = (p.papers || []);
+    const hasFree = papers.some(function (x) { return x.status === 'free'; });
+
+    return '<div class="post">' +
+      '<div class="post-name">' + esc(pick(p.nameEn, p.nameKn)) + '</div>' +
+      (p.syllabusUrl
+        ? '<a class="syllabus" href="' + esc(p.syllabusUrl) + '" target="_blank" rel="noopener" ' +
+          'data-en="Download syllabus (official)" data-kn="ಪಠ್ಯಕ್ರಮ ಡೌನ್‌ಲೋಡ್">Download syllabus (official)</a>'
+        : '') +
+      (papers.length
+        ? '<div class="papers">' + papers.map(renderPaper).join('') + '</div>' +
+          (hasFree ? '' :
+            '<p class="muted" style="margin-top:8px; font-size:0.76rem">' +
+            'No free paper on this post yet — subscribe to open these.</p>')
+        : '<p class="muted" style="margin-top:8px; font-size:0.78rem">No papers yet.</p>') +
+    '</div>';
+  }
+
+  function renderPaper(p) {
+    const free = p.status === 'free';
+    const id = esc(p.paperId);
+    return '<div class="paper">' +
+      '<div class="paper-year">' + esc(p.year || '—') + '</div>' +
+      '<div class="paper-meta">' +
+        (p.questionCount ? p.questionCount + ' Q' : '') +
+        (p.questionCount && p.durationMinutes ? ' · ' : '') +
+        (p.durationMinutes ? p.durationMinutes + ' min' : '') +
+      '</div>' +
+      '<span class="badge ' + (free ? 'badge-free' : 'badge-locked') + '" style="display:block;margin-bottom:7px">' +
+        (free ? 'FREE' : 'LOCKED') +
+      '</span>' +
+      (free
+        ? '<button class="btn btn-primary btn-sm" onclick="startExam(\'' + id + '\')" ' +
+          'data-en="Try free" data-kn="ಉಚಿತ ಪ್ರಯತ್ನ">Try free</button>'
+        : '<button class="btn btn-ghost btn-sm" onclick="location.href=\'subscribe.html\'" ' +
+          'data-en="Unlock" data-kn="ಅನ್‌ಲಾಕ್">Unlock</button>') +
+    '</div>';
+  }
+
+  /* --------------------------------------------------------------------
+     Interactions
+     ----------------------------------------------------------------- */
+  function toggleCat(i) { document.getElementById('cat-' + i).classList.toggle('open'); }
+
+  function startExam(paperId) { location.href = 'exam.html?paper=' + encodeURIComponent(paperId); }
+
+  const qBox = document.getElementById('q');
+  let qTimer = null;
+  qBox.addEventListener('input', function () {
+    document.getElementById('q-clear').classList.toggle('show', !!qBox.value);
+    clearTimeout(qTimer);
+    qTimer = setTimeout(function () { query = qBox.value; render(); applyLang(); }, 180);
+  });
+  function clearSearch() {
+    qBox.value = ''; query = '';
+    document.getElementById('q-clear').classList.remove('show');
+    render(); applyLang();
+  }
+
+  // re-render content when the language changes, so pick() runs again
+  document.addEventListener('ne:lang', function () { render(); applyLang(); });
+
+  load();
+</script>
+
+</body>
+</html>
